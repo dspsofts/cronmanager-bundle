@@ -1,0 +1,32 @@
+framework:
+    test: ~
+    secret: "secret"
+    session:
+        storage_id: session.storage.mock_file
+    profiler:
+        collect: false
+    templating:
+        engines: ['twig']
+    router:
+        resource: "%kernel.root_dir%/../../../Resources/config/routing.yml"
+
+web_profiler:
+    toolbar: false
+    intercept_redirects: false
+
+doctrine:
+    dbal:
+        driver:         pdo_sqlite
+        host:           localhost
+        dbname:         db_test
+        user:           db_user
+        password:       db_pwd
+        charset:        UTF8
+        memory:         true
+
+    orm:
+        auto_generate_proxy_classes: "%kernel.debug%"
+        auto_mapping: true
+
+dsp_softs_cron_manager:
+    logs_dir: "%kernel.logs_dir%/cronmanager/%kernel.environment%"
