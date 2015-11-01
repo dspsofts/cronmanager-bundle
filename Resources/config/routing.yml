@@ -1,0 +1,3 @@
+dspsofts_cronmanagerbundle:
+    resource: "@DspSoftsCronManagerBundle/Controller"
+    type: annotation
