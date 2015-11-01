@@ -1,0 +1,9 @@
+table.dsp_cm {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table.dsp_cm th, table.dsp_cm td {
+    border: solid 1px black;
+    padding: 5px;
+}

@@ -1,0 +1,30 @@
+{% extends '@DspSoftsCronManager/base.html.twig' %}
+
+{% block body %}
+    <h3>Log d'exécution des crons</h3>
+
+    {% if cronTaskLogList|length > 0 %}
+        <table class="dsp_cm">
+            <thead>
+                <tr>
+                    <th>Cron</th>
+                    <th>Début</th>
+                    <th>Fin</th>
+                    <th>Statut</th>
+                    <th>Log</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cronTaskLog in cronTaskLogList %}
+                    <tr>
+                        <td>{{ cronTaskLog.cronTask.name }}</td>
+                        <td>{{ cronTaskLog.dateStart|date('d/m/Y H:i:s') }}</td>
+                        <td>{{ cronTaskLog.dateEnd|date('d/m/Y H:i:s') }}</td>
+                        <td>{{ cronTaskLog.status }}</td>
+                        <td><a href="{{ path('dsp_cm_crontasks_log_view', {cronTaskLog: cronTaskLog.id}) }}">log</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}

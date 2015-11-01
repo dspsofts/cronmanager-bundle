@@ -1,0 +1,28 @@
+{% extends '@DspSoftsCronManager/base.html.twig' %}
+
+{% block body %}
+    <h3>Cron task list</h3>
+
+    <p><a href="{{ path('dsp_cm_crontasks_add') }}">Add task</a></p>
+
+    {% if cronTaskList|length > 0 %}
+        <table class="dsp_cm">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Planification</th>
+                    <th>Last run</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cronTask in cronTaskList %}
+                    <tr>
+                        <td><a href="{{ path('dsp_cm_crontasks_edit', {cronTask: cronTask.id}) }}">{{ cronTask.name }}</a></td>
+                        <td>{{ cronTask.planification }}</td>
+                        <td>{{ cronTask.lastrun|date('d/m/Y H:i:s') }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}
