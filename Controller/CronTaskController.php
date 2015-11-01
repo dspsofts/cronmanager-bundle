@@ -91,10 +91,6 @@ class CronTaskController extends Controller
 		$form = $this->createForm(new CronTaskType(), $cronTask);
 
 		if ($request->isMethod('POST')) {
-
-		}
-
-		if ($request->isMethod('POST')) {
 			$form->handleRequest($request);
 
 			if ($form->isValid()) {
