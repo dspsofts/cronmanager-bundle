@@ -17,18 +17,26 @@ class PlanificationChecker
 	const CRONTAB_MODE_NUMJOUR = 4;
 
 	/**
-	 * Vérifie une ligne de crontab pour voir s'il faut exécuter ou pas le traitement.
+	 * @var \DateTime
+	 */
+	private $timestamp;
+
+	public function __construct(\DateTime $timestamp = null)
+	{
+		if (!isset($timestamp)) {
+			$timestamp = new \DateTime();
+		}
+		$this->timestamp = $timestamp;
+	}
+
+	/**
+	 * Checks whether execution must be done or not for given planification string.
 	 *
-	 * @param string $planification Ligne de crontab
-	 * @param int $timeStamp Timestamp à tester (optional)
-	 *
+	 * @param $planification Planification string.
 	 * @return boolean
 	 */
-	public static function checkCrontab($planification, \DateTime $timeStamp = null)
+	public function isExecutionDue($planification)
 	{
-		if (!isset($timeStamp)) {
-			$timeStamp = new \DateTime();
-		}
 		$exec = array(
 			self::CRONTAB_MODE_MINUTE => false,
 			self::CRONTAB_MODE_HEURE => false,
@@ -40,7 +48,7 @@ class PlanificationChecker
 		foreach ($listPlanif as $i => $planification) {
 			$listPlanifCourante = explode(',', $planification);
 			foreach ($listPlanifCourante as $planifCourante) {
-				if (self::checkPlanif($planifCourante, $i, $timeStamp)) {
+				if ($this->checkPlanif($planifCourante, $i)) {
 					$exec[$i] = true;
 					break;
 				}
@@ -61,21 +69,17 @@ class PlanificationChecker
 	}
 
 	/**
-	 * Vérifie une entrée de planification.
+	 * Checks a planification entry.
 	 *
-	 * @param string $planification Entrée de planification
-	 * @param int $mode Mode de planification (correspond à l'une des constantes CRONTAB_MODE_*)
-	 * @param int $timeStamp Timestamp à tester (facultatif)
+	 * @param string $planification Planification entry
+	 * @param int $mode Planification mode (one of the CRONTAB_MODE_* consts )
 	 *
 	 * @return boolean
 	 */
-	private static function checkPlanif($planification, $mode, \DateTime $timeStamp = null)
+	private function checkPlanif($planification, $mode)
 	{
 		$result = false;
 
-		if (!isset($timeStamp)) {
-			$timeStamp = new \DateTime();
-		}
 		$planifAnalyse = $planification;
 
 		// Si on a juste une étoile, ça veut dire TOUT donc on renvoie directement true
@@ -128,19 +132,19 @@ class PlanificationChecker
 				foreach ($aPlanifTempsCourante as $temps) {
 					switch ($mode) {
 						case self::CRONTAB_MODE_MINUTE:
-							$tempsCourant = $timeStamp->format('i');
+							$tempsCourant = $this->timestamp->format('i');
 							break;
 						case self::CRONTAB_MODE_HEURE:
-							$tempsCourant = $timeStamp->format('H');
+							$tempsCourant = $this->timestamp->format('H');
 							break;
 						case self::CRONTAB_MODE_JOUR:
-							$tempsCourant = $timeStamp->format('d');
+							$tempsCourant = $this->timestamp->format('d');
 							break;
 						case self::CRONTAB_MODE_MOIS:
-							$tempsCourant = $timeStamp->format('m');
+							$tempsCourant = $this->timestamp->format('m');
 							break;
 						case self::CRONTAB_MODE_NUMJOUR:
-							$tempsCourant = $timeStamp->format('w');
+							$tempsCourant = $this->timestamp->format('w');
 							break;
 						default:
 							throw new \InvalidARgumentException('Invalid mode ' . $mode);

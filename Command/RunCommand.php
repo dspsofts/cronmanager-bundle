@@ -46,6 +46,8 @@ class RunCommand extends ContainerAwareCommand
 			$filesystem->mkdir($this->logDir);
 		}
 
+		$planificationChecker = new PlanificationChecker();
+
 		foreach ($cronTasks as $cronTask) {
 			// Get the last run time of this task, and calculate when it should run next
 			/*
@@ -57,7 +59,7 @@ class RunCommand extends ContainerAwareCommand
 			$run = (time() >= $nextRun);
 			*/
 
-			$run = PlanificationChecker::checkCrontab($cronTask->getPlanification());
+			$run = $planificationChecker->isExecutionDue($cronTask->getPlanification());
 
 			if ($run) {
 				$output->writeln(sprintf('Running Cron Task <info>%s</info>', $cronTask->getName()));

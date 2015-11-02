@@ -21,6 +21,11 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class CronTaskController extends Controller
 {
+	public function helloAction()
+	{
+		return new Response("Hello world");
+	}
+
 	/**
 	 * @Route("/test", name="dsp_cm_crontasks_test")
 	 */

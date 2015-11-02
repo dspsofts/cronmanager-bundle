@@ -20,6 +20,7 @@ class AppKernel extends Kernel
 			new Symfony\Bundle\TwigBundle\TwigBundle(),
 			new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
 			new Symfony\Bundle\WebProfilerBundle\WebProfilerBundle(),
+			new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
 			new DspSofts\CronManagerBundle\DspSoftsCronManagerBundle(),
 		);
 	}

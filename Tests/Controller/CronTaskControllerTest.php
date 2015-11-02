@@ -24,6 +24,7 @@ class CronTaskControllerTest extends WebTestCase
 
 	public function testIndex()
 	{
+		/*
 		$crawler = $this->client->request('GET', '/crontasks/list');
 
 		$response = $this->client->getResponse();
@@ -31,5 +32,13 @@ class CronTaskControllerTest extends WebTestCase
 		fwrite(STDERR, $response->getContent());
 		$this->assertTrue($response->isSuccessful());
 		$this->assertGreaterThan(0, $crawler->filter('html:contains("Cron task list")')->count());
+		*/
+		$crawler = $this->client->request('GET', '/crontasks/hello');
+
+		$response = $this->client->getResponse();
+		fwrite(STDERR, $response->getContent());
+
+		$this->assertTrue($response->isSuccessful());
+		$this->assertGreaterThan(0, $crawler->filter('html:contains("Hello world")')->count());
 	}
 }

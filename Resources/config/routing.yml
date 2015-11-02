@@ -1,3 +1,31 @@
-dspsofts_cronmanagerbundle:
-    resource: "@DspSoftsCronManagerBundle/Controller"
-    type: annotation
+#dspsofts_cronmanagerbundle:
+#    resource: "@DspSoftsCronManagerBundle/Controller"
+#    type: annotation
+
+dsp_cm_crontasks_hello:
+    path: /crontasks/hello
+    defaults: { _controller: DspSoftsCronManagerBundle:CronTask:hello }
+
+dsp_cm_crontasks_test:
+    path: /crontasks/test
+    defaults: { _controller: DspSoftsCronManagerBundle:CronTask:test }
+
+dsp_cm_crontasks_list:
+    path: /crontasks/list
+    defaults: { _controller: DspSoftsCronManagerBundle:CronTask:list }
+
+dsp_cm_crontasks_log:
+    path: /crontasks/log
+    defaults: { _controller: DspSoftsCronManagerBundle:CronTask:log }
+
+dsp_cm_crontasks_log_view:
+    path: /crontasks/log/{cronTaskLog}
+    defaults: { _controller: DspSoftsCronManagerBundle:CronTask:logView }
+
+dsp_cm_crontasks_add:
+    path: /crontasks/add
+    defaults: { _controller: DspSoftsCronManagerBundle:CronTask:add }
+
+dsp_cm_crontasks_edit:
+    path: /crontasks/{cronTask}
+    defaults: { _controller: DspSoftsCronManagerBundle:CronTask:edit }

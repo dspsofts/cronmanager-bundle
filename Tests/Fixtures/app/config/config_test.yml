@@ -27,6 +27,12 @@ doctrine:
     orm:
         auto_generate_proxy_classes: "%kernel.debug%"
         auto_mapping: true
+        naming_strategy: doctrine.orm.naming_strategy.underscore
+
+stof_doctrine_extensions:
+    orm:
+        default:
+            sluggable: true
 
 dsp_softs_cron_manager:
     logs_dir: "%kernel.logs_dir%/cronmanager/%kernel.environment%"
