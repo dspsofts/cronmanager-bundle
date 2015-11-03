@@ -13,7 +13,11 @@ The DspSoftsCronManagerBundle provides a simple way to launch and control any cr
 Installation
 ------------
 
-All the installation instructions are located in the documentation.
+This cron manager uses a main command which runs all crons. The command `dsp:cron:run` should be run every minute. 
+In order to do this, you can put this line in your crontab:
+
+    * * * * * /path/to/symfony/app/console dsp:cron:run
+
 
 License
 -------
