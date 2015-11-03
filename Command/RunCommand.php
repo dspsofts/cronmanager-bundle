@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * Main command which launches all crons.
+ * This command should be run every minute by crontab.
  *
  * @author Pierre Feyssaguet <pfeyssaguet@gmail.com>
  * @since 01/11/15 12:51
