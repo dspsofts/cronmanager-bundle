@@ -21,130 +21,134 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class CronTaskController extends Controller
 {
-	public function helloAction()
-	{
-		return new Response("Hello world");
-	}
+    public function helloAction()
+    {
+        return new Response("Hello world");
+    }
 
-	/**
-	 * @Route("/test", name="dsp_cm_crontasks_test")
-	 */
-	public function testAction()
-	{
-		$entity = new CronTask();
+    /**
+     * @Route("/test", name="dsp_cm_crontasks_test")
+     */
+    public function testAction()
+    {
+        $entity = new CronTask();
 
-		$entity
-			->setName('Example asset symlinking task')
-			->setPlanification('* * * * *') // Run once every hour
-			->setCommands(array(
-				'assets:install --symlink web'
-			));
+        $entity
+            ->setName('Example asset symlinking task')
+            ->setPlanification('* * * * *')// Run once every hour
+            ->setCommands(array(
+                'assets:install --symlink web'
+            ));
 
-		$em = $this->getDoctrine()->getManager();
-		$em->persist($entity);
-		$em->flush();
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($entity);
+        $em->flush();
 
-		return new Response('OK!');
-	}
+        return new Response('OK!');
+    }
 
-	/**
-	 * @Route("/list", name="dsp_cm_crontasks_list")
-	 */
-	public function listAction()
-	{
-		$em = $this->getDoctrine()->getManager();
-		$cronTaskRepo = $em->getRepository('DspSoftsCronManagerBundle:CronTask');
+    /**
+     * @Route("/list", name="dsp_cm_crontasks_list")
+     */
+    public function listAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+        $cronTaskRepo = $em->getRepository('DspSoftsCronManagerBundle:CronTask');
 
-		$cronTaskList = $cronTaskRepo->findAll();
+        $cronTaskList = $cronTaskRepo->findAll();
 
-		return $this->render('@DspSoftsCronManager/CronTask/list.html.twig', array('cronTaskList' => $cronTaskList));
-	}
+        return $this->render('@DspSoftsCronManager/CronTask/list.html.twig', array('cronTaskList' => $cronTaskList));
+    }
 
-	/**
-	 * @Route("/log", name="dsp_cm_crontasks_log")
-	 */
-	public function logAction()
-	{
-		$em = $this->getDoctrine()->getManager();
-		$cronTaskLogRepo = $em->getRepository('DspSoftsCronManagerBundle:CronTaskLog');
+    /**
+     * @Route("/log", name="dsp_cm_crontasks_log")
+     */
+    public function logAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+        $cronTaskLogRepo = $em->getRepository('DspSoftsCronManagerBundle:CronTaskLog');
 
-		$cronTaskLogList = $cronTaskLogRepo->findAll();
+        $cronTaskLogList = $cronTaskLogRepo->findAll();
 
-		return $this->render('@DspSoftsCronManager/CronTask/log.html.twig', array('cronTaskLogList' => $cronTaskLogList));
-	}
+        return $this->render('@DspSoftsCronManager/CronTask/log.html.twig',
+            array('cronTaskLogList' => $cronTaskLogList));
+    }
 
-	/**
-	 * @Route("/log/{cronTaskLog}", name="dsp_cm_crontasks_log_view")
-	 */
-	public function logViewAction(CronTaskLog $cronTaskLog)
-	{
-		$logDir = $this->getParameter('dsp_softs_cron_manager.logs_dir');
-		$filePath = $logDir . $cronTaskLog->getFilePath();
-		return new Response(file_get_contents($filePath) , 200, array('Content-type' => 'text/plain'));
-	}
+    /**
+     * @Route("/log/{cronTaskLog}", name="dsp_cm_crontasks_log_view")
+     */
+    public function logViewAction(CronTaskLog $cronTaskLog)
+    {
+        $logDir = $this->getParameter('dsp_softs_cron_manager.logs_dir');
+        $filePath = $logDir . $cronTaskLog->getFilePath();
 
-	/**
-	 * @Route("/add", name="dsp_cm_crontasks_add")
-	 *
-	 * @param Request $request
-	 * @return Response
-	 */
-	public function addAction(Request $request)
-	{
-		$em = $this->getDoctrine()->getManager();
-		$cronTask = new CronTask();
-		$form = $this->createForm(new CronTaskType(), $cronTask);
+        return new Response(file_get_contents($filePath), 200, array('Content-type' => 'text/plain'));
+    }
 
-		if ($request->isMethod('POST')) {
-			$form->handleRequest($request);
+    /**
+     * @Route("/add", name="dsp_cm_crontasks_add")
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function addAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $cronTask = new CronTask();
+        $form = $this->createForm(new CronTaskType(), $cronTask);
 
-			if ($form->isValid()) {
-				$em->persist($cronTask);
-				$em->flush();
+        if ($request->isMethod('POST')) {
+            $form->handleRequest($request);
 
-				$request->getSession()->getFlashBag()->add(
-					'info',
-					'Task ' . $cronTask->getName() . ' créée avec succès.'
-				);
+            if ($form->isValid()) {
+                $em->persist($cronTask);
+                $em->flush();
 
-				return $this->redirect($this->generateUrl('dsp_cm_crontasks_list'));
-			}
-		}
-		return $this->render('@DspSoftsCronManager/CronTask/form.html.twig', array(
-			'form' => $form->createView(),
-		));
-	}
+                $request->getSession()->getFlashBag()->add(
+                    'info',
+                    'Task ' . $cronTask->getName() . ' créée avec succès.'
+                );
 
-	/**
-	 * @Route("/{cronTask}", name="dsp_cm_crontasks_edit")
-	 *
-	 * @param Request $request
-	 * @param CronTask $cronTask
-	 * @return Response
-	 */
-	public function editAction(Request $request, CronTask $cronTask)
-	{
-		$em = $this->getDoctrine()->getManager();
+                return $this->redirect($this->generateUrl('dsp_cm_crontasks_list'));
+            }
+        }
 
-		$form = $this->createForm(new CronTaskType(), $cronTask);
+        return $this->render('@DspSoftsCronManager/CronTask/form.html.twig', array(
+            'form' => $form->createView(),
+        ));
+    }
 
-		if ($request->isMethod('POST')) {
-			$form->handleRequest($request);
+    /**
+     * @Route("/{cronTask}", name="dsp_cm_crontasks_edit")
+     *
+     * @param Request $request
+     * @param CronTask $cronTask
+     * @return Response
+     */
+    public function editAction(Request $request, CronTask $cronTask)
+    {
+        $em = $this->getDoctrine()->getManager();
 
-			if ($form->isValid()) {
-				$em->persist($cronTask);
-				$em->flush();
+        $form = $this->createForm(new CronTaskType(), $cronTask);
 
-				$request->getSession()->getFlashBag()->add(
-					'info',
-					'Task ' . $cronTask->getName() . ' mise à jour avec succès.'
-				);
+        if ($request->isMethod('POST')) {
+            $form->handleRequest($request);
 
-				return $this->redirect($this->generateUrl('dsp_cm_crontasks_list'));
-			}
-		}
-		return $this->render('@DspSoftsCronManager/CronTask/form.html.twig', array(
-			'form' => $form->createView(),
-		));
-	}
+            if ($form->isValid()) {
+                $em->persist($cronTask);
+                $em->flush();
+
+                $request->getSession()->getFlashBag()->add(
+                    'info',
+                    'Task ' . $cronTask->getName() . ' mise à jour avec succès.'
+                );
+
+                return $this->redirect($this->generateUrl('dsp_cm_crontasks_list'));
+            }
+        }
+
+        return $this->render('@DspSoftsCronManager/CronTask/form.html.twig', array(
+            'form' => $form->createView(),
+        ));
+    }
 }
