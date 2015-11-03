@@ -18,17 +18,17 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  */
 class CronTask
 {
-	/**
-	 * @ORM\Id
-	 * @ORM\GeneratedValue
-	 * @ORM\Column(name="id_cron_task", type="integer")
-	 */
-	private $id;
+    /**
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(name="id_cron_task", type="integer")
+     */
+    private $id;
 
-	/**
-	 * @ORM\Column(type="string")
-	 */
-	private $name;
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $name;
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
@@ -36,20 +36,20 @@ class CronTask
      */
     private $slug;
 
-	/**
-	 * @ORM\Column(type="array")
-	 */
-	private $commands;
+    /**
+     * @ORM\Column(type="array")
+     */
+    private $commands;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
     private $planification;
 
-	/**
-	 * @ORM\Column(type="datetime", nullable=true)
-	 */
-	private $lastRun;
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $lastRun;
 
     /**
      * Get id

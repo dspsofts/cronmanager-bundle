@@ -14,28 +14,28 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CronTaskType extends AbstractType
 {
-	public function getName()
-	{
-		return 'dspsofts_cm_crontask';
-	}
+    public function getName()
+    {
+        return 'dspsofts_cm_crontask';
+    }
 
-	public function configureOptions(OptionsResolver $resolver)
-	{
-		$resolver->setDefaults(array(
-			'data_class' => 'DspSofts\CronManagerBundle\Entity\CronTask',
-		));
-	}
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults(array(
+            'data_class' => 'DspSofts\CronManagerBundle\Entity\CronTask',
+        ));
+    }
 
-	public function buildForm(FormBuilderInterface $builder, array $options)
-	{
-		$builder
-			->add('name', 'text', array(
-				'label' => 'Nom',
-			))
-			->add('planification', 'text', array(
-				'label' => 'Planification',
-			))
-			->add('commands')
-			->add('save', 'submit');
-	}
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder
+            ->add('name', 'text', array(
+                'label' => 'Nom',
+            ))
+            ->add('planification', 'text', array(
+                'label' => 'Planification',
+            ))
+            ->add('commands')
+            ->add('save', 'submit');
+    }
 }

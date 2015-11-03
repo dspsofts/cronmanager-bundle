@@ -20,37 +20,37 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class CronTaskLog
 {
-	const STATUS_RUNNING = 'RUNNING';
-	const STATUS_OK = 'OK';
-	const STATUS_FAILED = 'FAILED';
+    const STATUS_RUNNING = 'RUNNING';
+    const STATUS_OK = 'OK';
+    const STATUS_FAILED = 'FAILED';
 
-	/**
-	 * @ORM\Id
-	 * @ORM\GeneratedValue
-	 * @ORM\Column(name="id_cron_task_log", type="integer")
-	 */
-	private $id;
+    /**
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(name="id_cron_task_log", type="integer")
+     */
+    private $id;
 
-	/**
-	 * @ORM\ManyToOne(targetEntity="DspSofts\CronManagerBundle\Entity\CronTask")
-	 * @ORM\JoinColumn(name="id_cron_task", referencedColumnName="id_cron_task")
-	 */
-	private $cronTask;
+    /**
+     * @ORM\ManyToOne(targetEntity="DspSofts\CronManagerBundle\Entity\CronTask")
+     * @ORM\JoinColumn(name="id_cron_task", referencedColumnName="id_cron_task")
+     */
+    private $cronTask;
 
-	/**
-	 * @ORM\Column(type="datetime")
-	 */
-	private $dateStart;
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $dateStart;
 
-	/**
-	 * @ORM\Column(type="datetime", nullable=true)
-	 */
-	private $dateEnd;
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $dateEnd;
 
-	/**
-	 * @ORM\Column(type="string", length=255)
-	 */
-	private $status;
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $status;
 
     /**
      * @ORM\Column(type="string", length=255)
