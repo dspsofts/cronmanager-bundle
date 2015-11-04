@@ -11,7 +11,7 @@ namespace DspSofts\CronManagerBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="DspSofts\CronManagerBundle\Entity\Repository\CronTaskLogRepository")
  * @ORM\Table(indexes={
  *      @ORM\Index(name="date_start", columns={"date_start"}),
  * 	    @ORM\Index(name="date_end", columns={"date_end"}),

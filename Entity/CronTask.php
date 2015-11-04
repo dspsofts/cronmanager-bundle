@@ -34,6 +34,11 @@ class CronTask
      */
     private $name;
 
+	/**
+	 * @ORM\Column(type="boolean")
+	 */
+	private $isActive;
+
     /**
      * @ORM\Column(type="string", length=255, unique=true)
      * @Gedmo\Slug(fields={"name"})
@@ -212,5 +217,29 @@ class CronTask
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * Set isActive
+     *
+     * @param boolean $isActive
+     *
+     * @return CronTask
+     */
+    public function setIsActive($isActive)
+    {
+        $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    /**
+     * Get isActive
+     *
+     * @return boolean
+     */
+    public function getIsActive()
+    {
+        return $this->isActive;
     }
 }

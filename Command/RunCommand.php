@@ -11,6 +11,7 @@
 namespace DspSofts\CronManagerBundle\Command;
 
 use DspSofts\CronManagerBundle\Entity\CronTask;
+use DspSofts\CronManagerBundle\Entity\CronTaskLog;
 use DspSofts\CronManagerBundle\Util\PlanificationChecker;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -30,9 +31,22 @@ class RunCommand extends ContainerAwareCommand
         $output->writeln('<comment>Running Cron Tasks...</comment>');
 
         $em = $this->getContainer()->get('doctrine.orm.entity_manager');
+
+        $cronTaskLogRepo = $em->getRepository('DspSoftsCronManagerBundle:CronTaskLog');
+        $cronTaskLogs = $cronTaskLogRepo->findByPidNotNull();
+        foreach ($cronTaskLogs as $cronTaskLog) {
+            if (posix_getpgid($cronTaskLog->getPid()) === false) {
+                $output->writeln(sprintf('PID %s not found for cron task log id %s, terminating task...', $cronTaskLog->getPid(), $cronTaskLog->getId()));
+                $cronTaskLog->setStatus(CronTaskLog::STATUS_FAILED);
+                $cronTaskLog->setPid(null);
+                $cronTaskLog->setDateEnd(new \DateTime());
+                $em->persist($cronTaskLog);
+                $em->flush();
+            }
+        }
+
         $cronTaskRepo = $em->getRepository('DspSoftsCronManagerBundle:CronTask');
-        /** @var CronTask[] $cronTasks */
-        $cronTasks = $cronTaskRepo->findAll();
+        $cronTasks = $cronTaskRepo->findBy(array('isActive' => true));
 
         $planificationChecker = new PlanificationChecker();
 
