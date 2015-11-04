@@ -35,7 +35,13 @@ class CronTaskType extends AbstractType
             ->add('planification', 'text', array(
                 'label' => 'Planification',
             ))
-            ->add('type')
+            ->add('type', 'choice', array(
+                'choices' => array(
+                    'SYMFONY' => 'Commande symfony',
+                    'COMMAND' => 'Ligne de commande',
+                    'URL' => 'URL',
+                )
+            ))
             ->add('command')
             ->add('save', 'submit');
     }

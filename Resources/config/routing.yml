@@ -22,6 +22,10 @@ dsp_cm_crontasks_log_view:
     path: /crontasks/log/{cronTaskLog}
     defaults: { _controller: DspSoftsCronManagerBundle:CronTask:logView }
 
+dsp_cm_crontasks_kill:
+    path: /crontasks/kill/{cronTaskLog}
+    defaults: { _controller: DspSoftsCronManagerBundle:CronTask:kill }
+
 dsp_cm_crontasks_add:
     path: /crontasks/add
     defaults: { _controller: DspSoftsCronManagerBundle:CronTask:add }

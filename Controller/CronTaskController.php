@@ -15,6 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Process\Process;
 
 /**
  * @Route("/crontasks")
@@ -148,5 +149,15 @@ class CronTaskController extends Controller
         return $this->render('@DspSoftsCronManager/CronTask/form.html.twig', array(
             'form' => $form->createView(),
         ));
+    }
+
+    public function killAction(CronTaskLog $cronTaskLog)
+    {
+        $process = new Process('kill -kill ' . $cronTaskLog->getPid());
+        $exitCode = $process->run();
+        if ($exitCode != 0) {
+            return new Response("Exit code $exitCode " . $process->getOutput() . $process->getErrorOutput());
+        }
+        return $this->redirect($this->generateUrl('dsp_cm_crontasks_log'));
     }
 }
