@@ -35,7 +35,8 @@ class CronTaskType extends AbstractType
             ->add('planification', 'text', array(
                 'label' => 'Planification',
             ))
-            ->add('commands')
+            ->add('type')
+            ->add('command')
             ->add('save', 'submit');
     }
 }

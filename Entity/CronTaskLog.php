@@ -21,7 +21,9 @@ use Doctrine\ORM\Mapping as ORM;
 class CronTaskLog
 {
     const STATUS_RUNNING = 'RUNNING';
-    const STATUS_OK = 'OK';
+    const STATUS_RUNNING_WITH_WARNINGS = 'RUNNING_WITH_WARNINGS';
+    const STATUS_SUCCESS = 'SUCCESS';
+    const STATUS_WARNING = 'WARNING';
     const STATUS_FAILED = 'FAILED';
 
     /**
@@ -36,6 +38,11 @@ class CronTaskLog
      * @ORM\JoinColumn(name="id_cron_task", referencedColumnName="id_cron_task")
      */
     private $cronTask;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $pid;
 
     /**
      * @ORM\Column(type="datetime")
@@ -185,5 +192,29 @@ class CronTaskLog
     public function getFilePath()
     {
         return $this->filePath;
+    }
+
+    /**
+     * Set pid
+     *
+     * @param integer $pid
+     *
+     * @return CronTaskLog
+     */
+    public function setPid($pid)
+    {
+        $this->pid = $pid;
+
+        return $this;
+    }
+
+    /**
+     * Get pid
+     *
+     * @return integer
+     */
+    public function getPid()
+    {
+        return $this->pid;
     }
 }

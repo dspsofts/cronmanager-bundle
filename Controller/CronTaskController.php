@@ -36,9 +36,7 @@ class CronTaskController extends Controller
         $entity
             ->setName('Example asset symlinking task')
             ->setPlanification('* * * * *')// Run once every hour
-            ->setCommands(array(
-                'assets:install --symlink web'
-            ));
+            ->setCommand('assets:install --symlink web');
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($entity);

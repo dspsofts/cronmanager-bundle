@@ -8,6 +8,7 @@
             <thead>
                 <tr>
                     <th>Cron</th>
+                    <th>PID</th>
                     <th>Début</th>
                     <th>Fin</th>
                     <th>Statut</th>
@@ -18,6 +19,7 @@
                 {% for cronTaskLog in cronTaskLogList %}
                     <tr>
                         <td>{{ cronTaskLog.cronTask.name }}</td>
+                        <td>{{ cronTaskLog.pid }}</td>
                         <td>{{ cronTaskLog.dateStart|date('d/m/Y H:i:s') }}</td>
                         <td>{{ cronTaskLog.dateEnd|date('d/m/Y H:i:s') }}</td>
                         <td>{{ cronTaskLog.status }}</td>

@@ -18,6 +18,10 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  */
 class CronTask
 {
+    const TYPE_SYMFONY = 'SYMFONY';
+    const TYPE_COMMAND = 'COMMAND';
+    const TYPE_URL = 'URL';
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -37,9 +41,14 @@ class CronTask
     private $slug;
 
     /**
-     * @ORM\Column(type="array")
+     * @ORM\Column(type="string", length=255)
      */
-    private $commands;
+    private $type;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $command;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -83,30 +92,6 @@ class CronTask
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * Set commands
-     *
-     * @param array $commands
-     *
-     * @return CronTask
-     */
-    public function setCommands($commands)
-    {
-        $this->commands = $commands;
-
-        return $this;
-    }
-
-    /**
-     * Get commands
-     *
-     * @return array
-     */
-    public function getCommands()
-    {
-        return $this->commands;
     }
 
     /**
@@ -179,5 +164,53 @@ class CronTask
     public function getSlug()
     {
         return $this->slug;
+    }
+
+    /**
+     * Set command
+     *
+     * @param string $command
+     *
+     * @return CronTask
+     */
+    public function setCommand($command)
+    {
+        $this->command = $command;
+
+        return $this;
+    }
+
+    /**
+     * Get command
+     *
+     * @return string
+     */
+    public function getCommand()
+    {
+        return $this->command;
+    }
+
+    /**
+     * Set type
+     *
+     * @param string $type
+     *
+     * @return CronTask
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * Get type
+     *
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
     }
 }

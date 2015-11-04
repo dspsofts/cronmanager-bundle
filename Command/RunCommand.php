@@ -11,6 +11,8 @@
 namespace DspSofts\CronManagerBundle\Command;
 
 
+use Doctrine\ORM\EntityManager;
+use DspSofts\CronManagerBundle\Entity\CronTask;
 use DspSofts\CronManagerBundle\Entity\CronTaskLog;
 use DspSofts\CronManagerBundle\Util\PlanificationChecker;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -19,14 +21,23 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\StreamOutput;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Process\Process;
 
 class RunCommand extends ContainerAwareCommand
 {
+    /** @var EntityManager */
+    private $entityManager;
+    
     private $output;
 
     private $logDir;
 
     private $logFile;
+
+    /**
+     * @var CronTaskLog
+     */
+    private $cronTaskLog;
 
     protected function configure()
     {
@@ -39,8 +50,10 @@ class RunCommand extends ContainerAwareCommand
         $output->writeln('<comment>Running Cron Tasks...</comment>');
 
         $this->output = $output;
-        $em = $this->getContainer()->get('doctrine.orm.entity_manager');
-        $cronTasks = $em->getRepository('DspSoftsCronManagerBundle:CronTask')->findAll();
+        $this->entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
+        $cronTaskRepo = $this->entityManager->getRepository('DspSoftsCronManagerBundle:CronTask');
+        /** @var CronTask[] $cronTasks */
+        $cronTasks = $cronTaskRepo->findAll();
 
         $this->logDir = $this->getContainer()->getParameter('dsp_softs_cron_manager.logs_dir');
         $filesystem = new Filesystem();
@@ -51,16 +64,6 @@ class RunCommand extends ContainerAwareCommand
         $planificationChecker = new PlanificationChecker();
 
         foreach ($cronTasks as $cronTask) {
-            // Get the last run time of this task, and calculate when it should run next
-            /*
-            $lastRun = $cronTask->getLastRun() ? $cronTask->getLastRun()->format('U') : 0;
-            $nextRun = $lastRun + $cronTask->getInterval();
-
-            // We must run this task if:
-            // * time() is larger or equal to $nextrun
-            $run = (time() >= $nextRun);
-            */
-
             $run = $planificationChecker->isExecutionDue($cronTask->getPlanification());
 
             if ($run) {
@@ -77,66 +80,97 @@ class RunCommand extends ContainerAwareCommand
 
                 $this->logFile = $dir . DIRECTORY_SEPARATOR . date('Ymd_His') . '.log';
 
-                $cronTaskLog = new CronTaskLog();
-                $em->persist($cronTaskLog);
+                $this->cronTaskLog = new CronTaskLog();
+                $this->entityManager->persist($this->cronTaskLog);
 
-                $cronTaskLog->setFilePath(str_replace($this->logDir, '', $this->logFile));
-                $cronTaskLog->setCronTask($cronTask);
-                $cronTaskLog->setDateStart(new \DateTime());
-                $cronTaskLog->setStatus(CronTaskLog::STATUS_RUNNING);
+                $this->cronTaskLog->setFilePath(str_replace($this->logDir, '', $this->logFile));
+                $this->cronTaskLog->setCronTask($cronTask);
+                $this->cronTaskLog->setDateStart(new \DateTime());
+                $this->cronTaskLog->setStatus(CronTaskLog::STATUS_RUNNING);
 
                 // Set $lastrun for this crontask
                 $cronTask->setLastRun(new \DateTime());
-                $em->persist($cronTask);
+                $this->entityManager->persist($cronTask);
 
-                $em->flush();
+                $this->entityManager->flush();
 
-                try {
-                    $commands = $cronTask->getCommands();
-                    foreach ($commands as $command) {
-                        $output->writeln(sprintf('Executing command <comment>%s</comment>...', $command));
+                $command = $cronTask->getCommand();
+                $type = $cronTask->getType();
 
-                        // Run the command
-                        $this->runCommand($command);
-                    }
+                $output->writeln("Type = <info>$type</info>");
+                $output->writeln("Command = <info>$command</info>");
 
-                    $output->writeln('<info>SUCCESS</info>');
-                    $cronTaskLog->setStatus(CronTaskLog::STATUS_OK);
-                } catch (\Exception $e) {
-                    $output->writeln('<error>ERROR</error>');
-                    $cronTaskLog->setStatus(CronTaskLog::STATUS_FAILED);
+                $execString = '';
+                if ($type == CronTask::TYPE_SYMFONY) {
+                    $output->writeln(sprintf('Executing symfony command <comment>%s</comment>...', $command));
+                    $execString = $this->getContainer()->get('kernel')->getRootDir() . DIRECTORY_SEPARATOR . 'console' . ' ' . $command;
+                } elseif ($type == CronTask::TYPE_COMMAND) {
+                    $output->writeln(sprintf('Executing command <comment>%s</comment>...', $command));
+                    $execString = $command;
+                } elseif ($type == CronTask::TYPE_URL) {
+                    $output->writeln(sprintf('Executing URL <comment>%s</comment>...', $command));
+                    $output->writeln('<error>NOT IMPLEMENTED YET !</error>');
+                    $execString = '';
                 }
 
-                $cronTaskLog->setDateEnd(new \DateTime());
-                $em->flush();
+                $output->writeln("Final command line = <info>$execString</info>");
+                // Run the command
+                $this->runCommand($execString);
+
+                $output->writeln('<info>FINISHED</info>');
+                $this->entityManager->flush();
             } else {
                 $output->writeln(sprintf('Skipping Cron Task <info>%s</info>', $cronTask->getName()));
             }
         }
 
         // Flush database changes
-        $em->flush();
+        $this->entityManager->flush();
 
         $output->writeln('<comment>Done!</comment>');
     }
 
+    private function updateCronTaskLog()
+    {
+        $this->entityManager->persist($this->cronTaskLog);
+        $this->entityManager->flush();
+    }
+
+    public function callbackProcess($type, $buffer)
+    {
+        $log = $buffer;
+        if (strtolower($type) === 'err') {
+            $this->cronTaskLog->setStatus(CronTaskLog::STATUS_RUNNING_WITH_WARNINGS);
+            $log = 'ERROR : ' . $log . PHP_EOL;
+        }
+
+        $log = date('Y-m-d H:i:s') . ' ' . $log;
+        file_put_contents($this->logFile, $log, FILE_APPEND);
+    }
+    
     private function runCommand($string)
     {
-        // Split namespace and arguments
-        $namespace = explode(' ', $string)[0];
+        $process = new Process($string);
+        $process->start(array($this, 'callbackProcess'));
 
-        // Set input
-        $command = $this->getApplication()->find($namespace);
-        $input = new StringInput($string);
+        $this->cronTaskLog->setPid($process->getPid());
+        $this->updateCronTaskLog();
 
-        $handle = fopen($this->logFile, 'w+');
-        $output = new StreamOutput($handle);
+        $exitCode = $process->wait();
 
-        // Send all output to the console
-        $returnCode = $command->run($input, $output);
+        $this->cronTaskLog->setDateEnd(new \DateTime());
 
-        fclose($handle);
+        if ($exitCode > 0) {
+            $this->cronTaskLog->setStatus(CronTaskLog::STATUS_FAILED);
+        } elseif ($process->getErrorOutput() != '') {
+            $this->cronTaskLog->setStatus(CronTaskLog::STATUS_WARNING);
+        } else {
+            $this->cronTaskLog->setStatus(CronTaskLog::STATUS_SUCCESS);
+        }
 
-        return $returnCode != 0;
+        $this->cronTaskLog->setPid(null);
+        $this->updateCronTaskLog();
+
+        return $exitCode != 0;
     }
 }
