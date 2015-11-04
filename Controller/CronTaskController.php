@@ -67,7 +67,10 @@ class CronTaskController extends Controller
         $em = $this->getDoctrine()->getManager();
         $cronTaskLogRepo = $em->getRepository('DspSoftsCronManagerBundle:CronTaskLog');
 
-        $cronTaskLogList = $cronTaskLogRepo->findAll();
+        $cronTaskLogRunningList = $cronTaskLogRepo->findByPidNotNull();
+        $cronTaskLogFinishedList = $cronTaskLogRepo->findFinishedByDate(new \DateTime());
+
+        $cronTaskLogList = array_merge($cronTaskLogRunningList, $cronTaskLogFinishedList);
 
         return $this->render('@DspSoftsCronManager/CronTask/log.html.twig',
             array('cronTaskLogList' => $cronTaskLogList));
