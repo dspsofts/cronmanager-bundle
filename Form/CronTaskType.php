@@ -43,6 +43,7 @@ class CronTaskType extends AbstractType
                 )
             ))
             ->add('command')
+            ->add('isActive')
             ->add('save', 'submit');
     }
 }
