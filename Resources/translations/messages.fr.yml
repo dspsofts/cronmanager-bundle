@@ -1,0 +1,13 @@
+cron_task:
+    list: Liste des tâches planifiées
+    add_task: Nouvelle tâche
+    name: Nom
+    planification: Planification
+    active: Active
+    last_run: Dernière exécution
+    is:
+        active:
+            yes: Oui
+            no: Non
+cron_task_log:
+    list: Logs d'exécution

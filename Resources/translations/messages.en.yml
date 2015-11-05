@@ -1,0 +1,13 @@
+cron_task:
+    list: Cron task list
+    add_task: Add task
+    name: Name
+    planification: Planification
+    active: Active
+    last_run: Last execution
+    is:
+        active:
+            yes: Yes
+            no: No
+cron_task_log:
+    list: Execution log
