@@ -12,14 +12,10 @@ use DspSofts\CronManagerBundle\Entity\CronTask;
 use DspSofts\CronManagerBundle\Entity\CronTaskLog;
 use DspSofts\CronManagerBundle\Form\CronTaskType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Process\Process;
 
-/**
- * @Route("/crontasks")
- */
 class CronTaskController extends Controller
 {
     public function helloAction()
@@ -27,9 +23,6 @@ class CronTaskController extends Controller
         return new Response("Hello world");
     }
 
-    /**
-     * @Route("/test", name="dsp_cm_crontasks_test")
-     */
     public function testAction()
     {
         $entity = new CronTask();
@@ -46,9 +39,6 @@ class CronTaskController extends Controller
         return new Response('OK!');
     }
 
-    /**
-     * @Route("/list", name="dsp_cm_crontasks_list")
-     */
     public function listAction()
     {
         $em = $this->getDoctrine()->getManager();
@@ -59,9 +49,6 @@ class CronTaskController extends Controller
         return $this->render('@DspSoftsCronManager/CronTask/list.html.twig', array('cronTaskList' => $cronTaskList));
     }
 
-    /**
-     * @Route("/log", name="dsp_cm_crontasks_log")
-     */
     public function logAction()
     {
         $em = $this->getDoctrine()->getManager();
@@ -76,9 +63,6 @@ class CronTaskController extends Controller
             array('cronTaskLogList' => $cronTaskLogList));
     }
 
-    /**
-     * @Route("/log/{cronTaskLog}", name="dsp_cm_crontasks_log_view")
-     */
     public function logViewAction(CronTaskLog $cronTaskLog)
     {
         $logDir = $this->getParameter('dsp_softs_cron_manager.logs_dir');
@@ -88,7 +72,6 @@ class CronTaskController extends Controller
     }
 
     /**
-     * @Route("/add", name="dsp_cm_crontasks_add")
      *
      * @param Request $request
      * @return Response
@@ -121,7 +104,6 @@ class CronTaskController extends Controller
     }
 
     /**
-     * @Route("/{cronTask}", name="dsp_cm_crontasks_edit")
      *
      * @param Request $request
      * @param CronTask $cronTask
