@@ -36,9 +36,11 @@ class CronTaskLogRepository extends EntityRepository
 		$queryBuilder = $this->createQueryBuilder('cron_task_log');
 		$queryBuilder->select('cron_task_log');
 		$queryBuilder->where('cron_task_log.pid IS NULL');
+		$queryBuilder->andWhere('cron_task_log.dateStart >= :dateStart');
 		//$queryBuilder->groupBy('cron_task_log.cronTask, cron_task_log.status');
 		$queryBuilder->orderBy('cron_task_log.dateStart', 'desc');
 
+		$queryBuilder->setParameters(array('dateStart' => $dateTime));
 		$query = $queryBuilder->getQuery();
 
 		return $query->getResult();
