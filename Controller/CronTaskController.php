@@ -49,18 +49,27 @@ class CronTaskController extends Controller
         return $this->render('@DspSoftsCronManager/CronTask/list.html.twig', array('cronTaskList' => $cronTaskList));
     }
 
-    public function logAction()
+    public function logAction(Request $request)
     {
+        $dateStart = $request->get('dateStart');
+        if ($dateStart === null) {
+            $dateStart = new \DateTime();
+        } else {
+            $dateStart = \DateTime::createFromFormat('Y-m-d', $dateStart);
+        }
+
         $em = $this->getDoctrine()->getManager();
         $cronTaskLogRepo = $em->getRepository('DspSoftsCronManagerBundle:CronTaskLog');
 
         $cronTaskLogRunningList = $cronTaskLogRepo->findByPidNotNull();
-        $cronTaskLogFinishedList = $cronTaskLogRepo->findFinishedByDate(new \DateTime());
+        $cronTaskLogFinishedList = $cronTaskLogRepo->findFinishedByDate($dateStart);
 
         $cronTaskLogList = array_merge($cronTaskLogRunningList, $cronTaskLogFinishedList);
 
-        return $this->render('@DspSoftsCronManager/CronTask/log.html.twig',
-            array('cronTaskLogList' => $cronTaskLogList));
+        return $this->render('@DspSoftsCronManager/CronTask/log.html.twig', array(
+            'dateStart' => $dateStart,
+            'cronTaskLogList' => $cronTaskLogList,
+        ));
     }
 
     public function logViewAction(CronTaskLog $cronTaskLog)
