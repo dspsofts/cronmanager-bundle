@@ -28,7 +28,11 @@
                         <td>{{ cronTaskLog.cronTask.name }}</td>
                         <td>{{ cronTaskLog.pid }} {% if cronTaskLog.pid != null %}<a onclick="if (!confirm('Etes-vous sûr(e) de vouloir tuer ce process ?')) return false;" href="{{ path('dsp_cm_crontasks_kill', {cronTaskLog: cronTaskLog.id}) }}">Kill</a>{% endif %}</td>
                         <td>{{ cronTaskLog.dateStart|date('d/m/Y H:i:s') }}</td>
-                        <td>{{ cronTaskLog.dateEnd|date('d/m/Y H:i:s') }}</td>
+                        <td>
+                            {% if cronTaskLog.dateEnd is not null %}
+                                {{ cronTaskLog.dateEnd|date('d/m/Y H:i:s') }}
+                            {% endif %}
+                        </td>
                         <td>{{ cronTaskLog.status }}</td>
                         <td><a href="{{ path('dsp_cm_crontasks_log_view', {cronTaskLog: cronTaskLog.id}) }}">log</a></td>
                     </tr>
