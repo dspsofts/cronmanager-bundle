@@ -21,7 +21,11 @@
                         <td><a href="{{ path('dsp_cm_crontasks_edit', {cronTask: cronTask.id}) }}">{{ cronTask.name }}</a></td>
                         <td>{{ cronTask.planification }}</td>
                         <td>{% if cronTask.isActive %}{{ 'cron_task.is.active.yes'|trans }}{% else %}{{ 'cron_task.is.active.no'|trans }}{% endif %}</td>
-                        <td>{{ cronTask.lastrun|date('d/m/Y H:i:s') }}</td>
+                        <td>
+                            {% if cronTask.lastRun is not null %}
+                                {{ cronTask.lastRun|date('d/m/Y H:i:s') }}
+                            {% endif %}
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
