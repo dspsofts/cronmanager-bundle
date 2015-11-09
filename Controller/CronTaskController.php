@@ -151,7 +151,7 @@ class CronTaskController extends Controller
     {
         $process = new Process('kill -kill ' . $cronTaskLog->getPid());
         $exitCode = $process->run();
-        if ($exitCode != 0) {
+        if ($exitCode !== 0) {
             return new Response("Exit code $exitCode " . $process->getOutput() . $process->getErrorOutput());
         }
         return $this->redirect($this->generateUrl('dsp_cm_crontasks_log'));
