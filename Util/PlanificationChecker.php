@@ -99,16 +99,18 @@ class PlanificationChecker
                 // On regarde si on a un / dans le critère
                 $moduloTemps = 1;
                 if (strstr($planifTempsCourante, '/')) {
-                    $aPlanif = explode('/', $planifTempsCourante);
-                    $planifTempsCourante = $aPlanif[0];
-                    $moduloTemps = $aPlanif[1];
+                    $planif = explode('/', $planifTempsCourante);
+                    $planifTempsCourante = $planif[0];
+                    $moduloTemps = $planif[1];
                 }
 
                 // On regarde si on a un tiret dans le critère
-                $aPlanifTempsCourante = array();
+                $tabPlanifTempsCourante = array();
                 if (strstr($planifTempsCourante, '-')) {
-                    $aPlanif = explode('-', $planifTempsCourante);
-                    foreach ($aPlanif as $i => $temps) {
+                    $planif = explode('-', $planifTempsCourante);
+                    $tempsMin = 0;
+                    $tempsMax = 0;
+                    foreach ($planif as $i => $temps) {
                         if ($i == 0) {
                             $tempsMin = $temps;
                         } elseif ($i == 1) {
@@ -116,20 +118,20 @@ class PlanificationChecker
                         }
                     }
                     for ($i = $tempsMin; $i <= $tempsMax; $i++) {
-                        $aPlanifTempsCourante[] = $i;
+                        $tabPlanifTempsCourante[] = $i;
                     }
                 } else {
-                    $aPlanifTempsCourante[] = $planifTempsCourante;
+                    $tabPlanifTempsCourante[] = $planifTempsCourante;
                 }
 
                 // On récupère l'unité de temps du début
-                $tempsDebut = $aPlanifTempsCourante[0];
+                $tempsDebut = $tabPlanifTempsCourante[0];
                 if ($tempsDebut == '*') {
                     $tempsDebut = 0;
                 }
 
                 // On peut maintenant parcourir les temps planifiés
-                foreach ($aPlanifTempsCourante as $temps) {
+                foreach ($tabPlanifTempsCourante as $temps) {
                     switch ($mode) {
                         case self::CRONTAB_MODE_MINUTE:
                             $tempsCourant = $this->timestamp->format('i');
@@ -147,7 +149,7 @@ class PlanificationChecker
                             $tempsCourant = $this->timestamp->format('w');
                             break;
                         default:
-                            throw new \InvalidARgumentException('Invalid mode ' . $mode);
+                            throw new \InvalidArgumentException('Invalid mode ' . $mode);
                     }
 
                     if ($temps == '*') {
