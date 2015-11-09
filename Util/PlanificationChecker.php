@@ -86,6 +86,7 @@ class PlanificationChecker
         if ($planifAnalyse == '*') {
             $result = true;
         } else {
+            $listePlanifTemps = array();
             // On regarde si on a une virgule dans le critère
             if (strstr($planifAnalyse, ',')) {
                 $listePlanifTemps = explode(',', $planifAnalyse);
