@@ -58,6 +58,7 @@ class CronTaskController extends Controller
         } else {
             $dateStart = \DateTime::createFromFormat('Y-m-d', $dateStart);
         }
+        $dateStart->setTime(0, 0, 0);
 
         $em = $this->getDoctrine()->getManager();
         /** @var CronTaskLogRepository $cronTaskLogRepo */
