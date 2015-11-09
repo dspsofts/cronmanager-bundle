@@ -83,25 +83,47 @@ class RunJobCommand extends ContainerAwareCommand
 
         $this->entityManager->flush();
 
-        $command = $cronTask->getCommand();
-        $type = $cronTask->getType();
+		// Check if task is already running
+		$taskAlreadyRunning = false;
+		if ($cronTask->getIsUnique()) {
+	        /** @var EntityRepository $cronTaskRepo */
+	        $cronTaskLogRepo = $this->entityManager->getRepository('DspSoftsCronManagerBundle:CronTaskLog');
 
-        $execString = '';
-        if ($type == CronTask::TYPE_SYMFONY) {
-            $output->writeln(sprintf('Executing symfony command <comment>%s</comment>...', $command));
-            $execString = 'exec ' . $this->getContainer()->get('kernel')->getRootDir() . DIRECTORY_SEPARATOR . 'console' . ' ' . $command;
-        } elseif ($type == CronTask::TYPE_COMMAND) {
-            $output->writeln(sprintf('Executing command <comment>%s</comment>...', $command));
-            $execString = 'exec ' . $command;
-        } elseif ($type == CronTask::TYPE_URL) {
-            $output->writeln(sprintf('Executing URL <comment>%s</comment>...', $command));
-            $output->writeln('<error>NOT IMPLEMENTED YET !</error>');
-            $execString = '';
-        }
+			// TODO create a specific method for this, no need to parse every running task here
+			$runningTasks = $cronTaskRepo->findByPidNotNull();
+			foreach ($runningTasks as $runningTask) {
+				if ($runningTask->getCronTask() == $cronTask) {
+					$output->writeln('<warning>This task is unique and it is already running</warning>');
 
-        $output->writeln("Final command line = <info>$execString</info>");
-        // Run the command
-        $this->runCommand($execString, $cronTask->getTimeout());
+					$this->cronTaskLog->setStatus(CronTaskLog::STATUS_ALREADY_RUNNING);
+					$this->cronTaskLog->setDateEnd(new \DateTime());
+					$this->entityManager->persist($this->cronTaskLog);
+					$this->entityManager->flush();
+				}
+			}
+		}
+
+		if (!$taskAlreadyRunning) {
+	        $command = $cronTask->getCommand();
+	        $type = $cronTask->getType();
+
+	        $execString = '';
+	        if ($type == CronTask::TYPE_SYMFONY) {
+	            $output->writeln(sprintf('Executing symfony command <comment>%s</comment>...', $command));
+	            $execString = 'exec ' . $this->getContainer()->get('kernel')->getRootDir() . DIRECTORY_SEPARATOR . 'console' . ' ' . $command;
+	        } elseif ($type == CronTask::TYPE_COMMAND) {
+	            $output->writeln(sprintf('Executing command <comment>%s</comment>...', $command));
+	            $execString = 'exec ' . $command;
+	        } elseif ($type == CronTask::TYPE_URL) {
+	            $output->writeln(sprintf('Executing URL <comment>%s</comment>...', $command));
+	            $output->writeln('<error>NOT IMPLEMENTED YET !</error>');
+	            $execString = '';
+	        }
+
+	        $output->writeln("Final command line = <info>$execString</info>");
+	        // Run the command
+	        $this->runCommand($execString, $cronTask->getTimeout());
+		}
 
         $output->writeln('<info>FINISHED</info>');
     }
