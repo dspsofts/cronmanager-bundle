@@ -145,7 +145,7 @@ class RunJobCommand extends ContainerAwareCommand
             $this->cronTaskLog->setPid(null);
             $this->updateCronTaskLog();
 
-            return $exitCode != 0;
+            return $exitCode !== 0;
         } catch (\Exception $e) {
             $this->cronTaskLog->setStatus(CronTaskLog::STATUS_FAILED);
             $this->cronTaskLog->setPid(null);
