@@ -30,6 +30,10 @@ class CronTaskTest extends \PHPUnit_Framework_TestCase
         $cronTask->setPlanification('* * * * *');
         $this->assertEquals('* * * * *', $cronTask->getPlanification());
 
+        $this->assertNull($cronTask->getTimeout());
+        $cronTask->setTimeout(1200);
+        $this->assertEquals(1200, $cronTask->getTimeout());
+
         $cronTask->setType(CronTask::TYPE_SYMFONY);
         $this->assertEquals(CronTask::TYPE_SYMFONY, $cronTask->getType());
 
