@@ -90,13 +90,15 @@ class RunJobCommand extends ContainerAwareCommand
 	        $cronTaskLogRepo = $this->entityManager->getRepository('DspSoftsCronManagerBundle:CronTaskLog');
 
 			// TODO create a specific method for this, no need to parse every running task here
-			$runningTasks = $cronTaskRepo->findByPidNotNull();
+			$runningTasks = $cronTaskLogRepo->findByPidNotNull();
 			foreach ($runningTasks as $runningTask) {
 				if ($runningTask->getCronTask() == $cronTask) {
+					$taskAlreadyRunning = true;
 					$output->writeln('<warning>This task is unique and it is already running</warning>');
 
 					$this->cronTaskLog->setStatus(CronTaskLog::STATUS_ALREADY_RUNNING);
 					$this->cronTaskLog->setDateEnd(new \DateTime());
+					$this->cronTaskLog->setPid(null);
 					$this->entityManager->persist($this->cronTaskLog);
 					$this->entityManager->flush();
 				}
