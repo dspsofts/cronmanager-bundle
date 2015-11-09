@@ -9,6 +9,7 @@
 namespace DspSofts\CronManagerBundle\Command;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use DspSofts\CronManagerBundle\Entity\CronTask;
 use DspSofts\CronManagerBundle\Entity\CronTaskLog;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -22,8 +23,6 @@ class RunJobCommand extends ContainerAwareCommand
 {
     /** @var EntityManager */
     private $entityManager;
-
-    private $output;
 
     private $logDir;
 
@@ -44,9 +43,14 @@ class RunJobCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        /** @var EntityManager entityManager */
         $this->entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
+
+        /** @var EntityRepository $cronTaskRepo */
         $cronTaskRepo = $this->entityManager->getRepository('DspSoftsCronManagerBundle:CronTask');
-        $cronTask = $cronTaskRepo->findOneById($input->getOption('crontask'));
+
+        /** @var CronTask $cronTask */
+        $cronTask = $cronTaskRepo->findOneBy(array('id' => $input->getOption('crontask')));
 
         $this->logDir = $this->getContainer()->getParameter('dsp_softs_cron_manager.logs_dir');
         $filesystem = new Filesystem();
@@ -97,7 +101,7 @@ class RunJobCommand extends ContainerAwareCommand
 
         $output->writeln("Final command line = <info>$execString</info>");
         // Run the command
-        $this->runCommand($execString);
+        $this->runCommand($execString, $cronTask->getTimeout());
 
         $output->writeln('<info>FINISHED</info>');
     }
@@ -120,11 +124,11 @@ class RunJobCommand extends ContainerAwareCommand
         file_put_contents($this->logFile, $log, FILE_APPEND);
     }
 
-    private function runCommand($string)
+    private function runCommand($string, $timeout = 0)
     {
         try {
             $process = new Process($string);
-            $process->setTimeout(0);
+            $process->setTimeout($timeout);
             $process->start(array($this, 'callbackProcess'));
 
             $this->cronTaskLog->setPid($process->getPid());
@@ -149,6 +153,7 @@ class RunJobCommand extends ContainerAwareCommand
         } catch (\Exception $e) {
             $this->cronTaskLog->setStatus(CronTaskLog::STATUS_FAILED);
             $this->cronTaskLog->setPid(null);
+            $this->cronTaskLog->setDateEnd(new \DateTime());
             $this->updateCronTaskLog();
 
             return 1;
