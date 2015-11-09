@@ -61,6 +61,11 @@ class CronTask
     private $planification;
 
     /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $timeout;
+
+    /**
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $lastRun;
@@ -145,6 +150,30 @@ class CronTask
     public function getPlanification()
     {
         return $this->planification;
+    }
+
+    /**
+     * Set timeout
+     *
+     * @param integer $timeout
+     *
+     * @return CronTask
+     */
+    public function setTimeout($timeout)
+    {
+        $this->timeout = $timeout;
+
+        return $this;
+    }
+
+    /**
+     * Get timeout
+     *
+     * @return integer
+     */
+    public function getTimeout()
+    {
+        return $this->timeout;
     }
 
     /**
