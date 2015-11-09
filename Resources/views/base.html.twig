@@ -1,8 +1,13 @@
-<link rel="stylesheet" href="{{ asset('bundles/dspsoftscronmanager/main.css') }}" />
-
+<html>
+<head>
+    <link rel="stylesheet" href="{{ asset('bundles/dspsoftscronmanager/main.css') }}" />
+</head>
+<body>
 <ul>
     <li><a href="{{ path('dsp_cm_crontasks_list') }}">{{ 'cron_task.list'|trans }}</a></li>
     <li><a href="{{ path('dsp_cm_crontasks_log') }}">{{ 'cron_task_log.list'|trans }}</a></li>
 </ul>
 
 {% block body %}{% endblock %}
+</body>
+</html>
