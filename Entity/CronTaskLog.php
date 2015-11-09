@@ -25,6 +25,7 @@ class CronTaskLog
     const STATUS_SUCCESS = 'SUCCESS';
     const STATUS_WARNING = 'WARNING';
     const STATUS_FAILED = 'FAILED';
+    const STATUS_ALREADY_RUNNING = 'ALREADY_RUNNING';
 
     /**
      * @ORM\Id
