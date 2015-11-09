@@ -10,6 +10,7 @@ namespace DspSofts\CronManagerBundle\Controller;
 
 use DspSofts\CronManagerBundle\Entity\CronTask;
 use DspSofts\CronManagerBundle\Entity\CronTaskLog;
+use DspSofts\CronManagerBundle\Entity\Repository\CronTaskLogRepository;
 use DspSofts\CronManagerBundle\Form\CronTaskType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -59,6 +60,7 @@ class CronTaskController extends Controller
         }
 
         $em = $this->getDoctrine()->getManager();
+        /** @var CronTaskLogRepository $cronTaskLogRepo */
         $cronTaskLogRepo = $em->getRepository('DspSoftsCronManagerBundle:CronTaskLog');
 
         $cronTaskLogRunningList = $cronTaskLogRepo->findByPidNotNull();
