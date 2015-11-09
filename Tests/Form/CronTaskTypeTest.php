@@ -24,6 +24,7 @@ class CronTaskTypeTest extends TypeTestCase
             'type' => CronTask::TYPE_SYMFONY,
             'command' => 'assets:deploy --symlink',
             'isActive' => true,
+            'isUnique' => true,
         );
 
         $form->submit($formData);

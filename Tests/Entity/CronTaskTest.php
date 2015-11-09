@@ -62,4 +62,20 @@ class CronTaskTest extends \PHPUnit_Framework_TestCase
 		$cronTask->setLastRun($testDate);
 		$this->assertEquals($testDate, $cronTask->getLastRun());
 	}
+
+	public function testIsActive()
+	{
+		$cronTask = new CronTask();
+		$this->assertFalse($cronTask->getIsActive());
+		$cronTask->setIsActive(true);
+		$this->assertTrue($cronTask->getIsActive());
+	}
+
+	public function testIsUnique()
+	{
+		$cronTask = new CronTask();
+		$this->assertFalse($cronTask->getIsUnique());
+		$cronTask->setIsUnique(true);
+		$this->assertTrue($cronTask->getIsUnique());
+	}
 }

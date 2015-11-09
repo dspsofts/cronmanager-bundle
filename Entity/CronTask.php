@@ -37,7 +37,12 @@ class CronTask
 	/**
 	 * @ORM\Column(type="boolean")
 	 */
-	private $isActive;
+	private $isActive = false;
+
+	/**
+	 * @ORM\Column(type="boolean")
+	 */
+	private $isUnique = false;
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
@@ -271,4 +276,28 @@ class CronTask
     {
         return $this->isActive;
     }
+
+    /**
+     * Set isUnique
+     *
+     * @param boolean $isUnique
+     *
+     * @return CronTask
+     */
+	public function setIsUnique($isUnique)
+	{
+		$this->isUnique = $isUnique;
+
+		return $this;
+	}
+
+	/**
+	 * Get isUnique
+	 *
+	 * @return boolean
+	 */
+	public function getIsUnique()
+	{
+		return $this->isUnique;
+	}
 }

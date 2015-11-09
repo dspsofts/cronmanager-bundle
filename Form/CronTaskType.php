@@ -45,6 +45,7 @@ class CronTaskType extends AbstractType
             ->add('command')
             ->add('timeout')
             ->add('isActive')
+            ->add('isUnique')
             ->add('save', 'submit');
     }
 }
