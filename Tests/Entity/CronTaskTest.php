@@ -12,33 +12,54 @@ use DspSofts\CronManagerBundle\Entity\CronTask;
 
 class CronTaskTest extends \PHPUnit_Framework_TestCase
 {
-    public function testFields()
-    {
-        $cronTask = new CronTask();
+	public function testId()
+	{
+		$cronTask = new CronTask();
+		$this->assertNull($cronTask->getId());
+	}
 
-        $this->assertNull($cronTask->getId());
+	public function testName()
+	{
+		$cronTask = new CronTask();
+		$cronTask->setName('test');
+		$this->assertEquals('test', $cronTask->getName());
+	}
 
-        $cronTask->setName('test');
-        $this->assertEquals('test', $cronTask->getName());
+	public function testCommand()
+	{
+		$cronTask = new CronTask();
+		$cronTask->setCommand('test');
+		$this->assertEquals('test', $cronTask->getCommand());
+	}
 
-        $cronTask->setCommand('test');
-        $this->assertEquals('test', $cronTask->getCommand());
+	public function testPlanification()
+	{
+		$cronTask = new CronTask();
+		$cronTask->setPlanification('* * * * *');
+		$this->assertEquals('* * * * *', $cronTask->getPlanification());
+	}
 
-        $cronTask->setIsActive(true);
-        $this->assertTrue($cronTask->getIsActive());
+	public function testTimeout()
+	{
+		$cronTask = new CronTask();
+		$this->assertNull($cronTask->getTimeout());
 
-        $cronTask->setPlanification('* * * * *');
-        $this->assertEquals('* * * * *', $cronTask->getPlanification());
+		$cronTask->setTimeout(1200);
+		$this->assertEquals(1200, $cronTask->getTimeout());
+	}
 
-        $this->assertNull($cronTask->getTimeout());
-        $cronTask->setTimeout(1200);
-        $this->assertEquals(1200, $cronTask->getTimeout());
+	public function testType()
+	{
+		$cronTask = new CronTask();
+		$cronTask->setType(CronTask::TYPE_SYMFONY);
+		$this->assertEquals(CronTask::TYPE_SYMFONY, $cronTask->getType());
+	}
 
-        $cronTask->setType(CronTask::TYPE_SYMFONY);
-        $this->assertEquals(CronTask::TYPE_SYMFONY, $cronTask->getType());
-
-        $testDate = new \DateTime();
-        $cronTask->setLastRun($testDate);
-        $this->assertEquals($testDate, $cronTask->getLastRun());
-    }
+	public function testLastRun()
+	{
+		$testDate = new \DateTime();
+		$cronTask = new CronTask();
+		$cronTask->setLastRun($testDate);
+		$this->assertEquals($testDate, $cronTask->getLastRun());
+	}
 }
