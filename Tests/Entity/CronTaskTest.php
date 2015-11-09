@@ -74,8 +74,8 @@ class CronTaskTest extends \PHPUnit_Framework_TestCase
 	public function testIsUnique()
 	{
 		$cronTask = new CronTask();
-		$this->assertFalse($cronTask->getIsUnique());
-		$cronTask->setIsUnique(true);
 		$this->assertTrue($cronTask->getIsUnique());
+		$cronTask->setIsUnique(false);
+		$this->assertFalse($cronTask->getIsUnique());
 	}
 }

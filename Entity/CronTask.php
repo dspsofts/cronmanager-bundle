@@ -42,7 +42,7 @@ class CronTask
 	/**
 	 * @ORM\Column(type="boolean")
 	 */
-	private $isUnique = false;
+	private $isUnique = true;
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
