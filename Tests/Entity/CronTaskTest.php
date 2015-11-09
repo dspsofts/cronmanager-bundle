@@ -20,5 +20,21 @@ class CronTaskTest extends \PHPUnit_Framework_TestCase
 
         $cronTask->setName('test');
         $this->assertEquals('test', $cronTask->getName());
+
+        $cronTask->setCommand('test');
+        $this->assertEquals('test', $cronTask->getCommand());
+
+        $cronTask->setIsActive(true);
+        $this->assertTrue($cronTask->getIsActive());
+
+        $cronTask->setPlanification('* * * * *');
+        $this->assertEquals('* * * * *', $cronTask->getPlanification());
+
+        $cronTask->setType(CronTask::TYPE_SYMFONY);
+        $this->assertEquals(CronTask::TYPE_SYMFONY, $cronTask->getType());
+
+        $testDate = new \DateTime();
+        $cronTask->setLastRun($testDate);
+        $this->assertEquals($testDate, $cronTask->getLastRun());
     }
 }
