@@ -36,7 +36,7 @@ class CronTaskControllerTest extends WebTestCase
 		$crawler = $this->client->request('GET', '/crontasks/hello');
 
 		$response = $this->client->getResponse();
-		fwrite(STDERR, $response->getContent());
+		//fwrite(STDERR, $response->getContent());
 
 		$this->assertTrue($response->isSuccessful());
 		$this->assertGreaterThan(0, $crawler->filter('html:contains("Hello world")')->count());
