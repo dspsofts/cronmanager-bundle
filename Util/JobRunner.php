@@ -8,6 +8,7 @@
 
 namespace DspSofts\CronManagerBundle\Util;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use DspSofts\CronManagerBundle\Entity\CronTask;
@@ -19,9 +20,9 @@ use Symfony\Component\Process\Process;
 class JobRunner
 {
     /**
-     * @var EntityManager
+     * @var ManagerRegistry
      */
-    private $entityManager;
+    private $managerRegistry;
 
     /**
      * @var string
@@ -48,9 +49,9 @@ class JobRunner
      */
     private $cronTaskLog;
 
-    public function __construct(EntityManager $entityManager, $kernelRootDir, $logDir, LoggerInterface $logger = null)
+    public function __construct(ManagerRegistry $managerRegistry, $kernelRootDir, $logDir, LoggerInterface $logger = null)
     {
-        $this->entityManager = $entityManager;
+        $this->managerRegistry = $managerRegistry;
         $this->kernelRootDir = $kernelRootDir;
         $this->logDir = $logDir;
         $this->logger = $logger;
@@ -58,8 +59,9 @@ class JobRunner
 
     public function runJob($cronTaskId)
     {
+        $entityManagerCronTask = $this->managerRegistry->getManagerForClass('DspSoftsCronManagerBundle:CronTask');
         /** @var EntityRepository $cronTaskRepo */
-        $cronTaskRepo = $this->entityManager->getRepository('DspSoftsCronManagerBundle:CronTask');
+        $cronTaskRepo = $entityManagerCronTask->getRepository('DspSoftsCronManagerBundle:CronTask');
 
         /** @var CronTask $cronTask */
         $cronTask = $cronTaskRepo->findOneBy(array('id' => $cronTaskId));
@@ -80,8 +82,9 @@ class JobRunner
 
         $this->logFile = $dir . DIRECTORY_SEPARATOR . date('Ymd_His') . '.log';
 
+        $entityManagerCronTaskLog = $this->managerRegistry->getManagerForClass('DspSoftsCronManagerBundle:CronTaskLog');
         $this->cronTaskLog = new CronTaskLog();
-        $this->entityManager->persist($this->cronTaskLog);
+        $entityManagerCronTaskLog->persist($this->cronTaskLog);
 
         $this->cronTaskLog->setFilePath(str_replace($this->logDir, '', $this->logFile));
         $this->cronTaskLog->setCronTask($cronTask);
@@ -90,15 +93,14 @@ class JobRunner
 
         // Set $lastrun for this crontask
         $cronTask->setLastRun(new \DateTime());
-        $this->entityManager->persist($cronTask);
-
-        $this->entityManager->flush();
+        $entityManagerCronTask->persist($cronTask);
+        $entityManagerCronTask->flush();
 
         // Check if task is already running
         $taskAlreadyRunning = false;
         if ($cronTask->getIsUnique()) {
             /** @var EntityRepository $cronTaskRepo */
-            $cronTaskLogRepo = $this->entityManager->getRepository('DspSoftsCronManagerBundle:CronTaskLog');
+            $cronTaskLogRepo = $entityManagerCronTaskLog->getRepository('DspSoftsCronManagerBundle:CronTaskLog');
 
             // TODO create a specific method for this, no need to parse every running task here
             $runningTasks = $cronTaskLogRepo->findByPidNotNull();
@@ -112,8 +114,8 @@ class JobRunner
                     $this->cronTaskLog->setStatus(CronTaskLog::STATUS_ALREADY_RUNNING);
                     $this->cronTaskLog->setDateEnd(new \DateTime());
                     $this->cronTaskLog->setPid(null);
-                    $this->entityManager->persist($this->cronTaskLog);
-                    $this->entityManager->flush();
+                    $entityManagerCronTaskLog->persist($this->cronTaskLog);
+                    $entityManagerCronTaskLog->flush();
                 }
             }
         }
@@ -149,12 +151,6 @@ class JobRunner
         }
     }
 
-    private function updateCronTaskLog()
-    {
-        $this->entityManager->persist($this->cronTaskLog);
-        $this->entityManager->flush();
-    }
-
     public function callbackProcess($type, $buffer)
     {
         $log = $buffer;
@@ -169,13 +165,16 @@ class JobRunner
 
     private function runCommand($string, $timeout = 0)
     {
+        $entityManager = $this->managerRegistry->getManagerForClass('DspSoftsCronManagerBundle:CronTaskLog');
+
         try {
             $process = new Process($string);
             $process->setTimeout($timeout);
             $process->start(array($this, 'callbackProcess'));
 
             $this->cronTaskLog->setPid($process->getPid());
-            $this->updateCronTaskLog();
+            $entityManager->persist($this->cronTaskLog);
+            $entityManager->flush();
 
             $exitCode = $process->wait();
 
@@ -190,14 +189,16 @@ class JobRunner
             }
 
             $this->cronTaskLog->setPid(null);
-            $this->updateCronTaskLog();
+            $entityManager->persist($this->cronTaskLog);
+            $entityManager->flush();
 
             return $exitCode !== 0;
         } catch (\Exception $e) {
             $this->cronTaskLog->setStatus(CronTaskLog::STATUS_FAILED);
             $this->cronTaskLog->setPid(null);
             $this->cronTaskLog->setDateEnd(new \DateTime());
-            $this->updateCronTaskLog();
+            $entityManager->persist($this->cronTaskLog);
+            $entityManager->flush();
 
             return 1;
         }

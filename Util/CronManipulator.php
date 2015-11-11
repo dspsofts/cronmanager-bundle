@@ -8,6 +8,7 @@
 
 namespace DspSofts\CronManagerBundle\Util;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use DspSofts\CronManagerBundle\Entity\CronTaskLog;
 use Psr\Log\LoggerInterface;
@@ -16,9 +17,9 @@ use Symfony\Component\Process\Process;
 class CronManipulator
 {
     /**
-     * @var EntityManager
+     * @var ManagerRegistry
      */
-    private $entityManager;
+    private $managerRegistry;
 
     /**
      * @var PlanificationChecker
@@ -35,9 +36,9 @@ class CronManipulator
      */
     private $logger;
 
-    public function __construct(EntityManager $entityManager, PlanificationChecker $planificationChecker, $kernelRootDir, LoggerInterface $logger = null)
+    public function __construct(ManagerRegistry $managerRegistry, PlanificationChecker $planificationChecker, $kernelRootDir, LoggerInterface $logger = null)
     {
-        $this->entityManager = $entityManager;
+        $this->managerRegistry = $managerRegistry;
         $this->logger = $logger;
         $this->planificationChecker = $planificationChecker;
         $this->kernelRootDir = $kernelRootDir;
@@ -45,7 +46,8 @@ class CronManipulator
 
     public function checkRunningCrons()
     {
-        $cronTaskLogRepo = $this->entityManager->getRepository('DspSoftsCronManagerBundle:CronTaskLog');
+        $entityManager = $this->managerRegistry->getManagerForClass('DspSoftsCronManagerBundle:CronTask');
+        $cronTaskLogRepo = $entityManager->getRepository('DspSoftsCronManagerBundle:CronTaskLog');
         $cronTaskLogs = $cronTaskLogRepo->findByPidNotNull();
         foreach ($cronTaskLogs as $cronTaskLog) {
             if (posix_getpgid($cronTaskLog->getPid()) === false) {
@@ -55,15 +57,16 @@ class CronManipulator
                 $cronTaskLog->setStatus(CronTaskLog::STATUS_FAILED);
                 $cronTaskLog->setPid(null);
                 $cronTaskLog->setDateEnd(new \DateTime());
-                $this->entityManager->persist($cronTaskLog);
-                $this->entityManager->flush();
+                $entityManager->persist($cronTaskLog);
+                $entityManager->flush();
             }
         }
     }
 
     public function runCrons()
     {
-        $cronTaskRepo = $this->entityManager->getRepository('DspSoftsCronManagerBundle:CronTask');
+        $entityManager = $this->managerRegistry->getManagerForClass('DspSoftsCronManagerBundle:CronTask');
+        $cronTaskRepo = $entityManager->getRepository('DspSoftsCronManagerBundle:CronTask');
         $cronTasks = $cronTaskRepo->findBy(array('isActive' => true));
 
         foreach ($cronTasks as $cronTask) {
