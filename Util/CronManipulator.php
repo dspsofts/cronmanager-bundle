@@ -46,7 +46,7 @@ class CronManipulator
 
     public function checkRunningCrons()
     {
-        $entityManager = $this->managerRegistry->getManagerForClass('DspSoftsCronManagerBundle:CronTask');
+        $entityManager = $this->managerRegistry->getManagerForClass('DspSoftsCronManagerBundle:CronTaskLog');
         $cronTaskLogRepo = $entityManager->getRepository('DspSoftsCronManagerBundle:CronTaskLog');
         $cronTaskLogs = $cronTaskLogRepo->findByPidNotNull();
         foreach ($cronTaskLogs as $cronTaskLog) {
