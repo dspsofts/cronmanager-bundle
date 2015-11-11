@@ -50,39 +50,6 @@ class CronTaskController extends Controller
         return $this->render('@DspSoftsCronManager/CronTask/list.html.twig', array('cronTaskList' => $cronTaskList));
     }
 
-    public function logAction(Request $request)
-    {
-        $dateStart = $request->get('dateStart');
-        if ($dateStart === null) {
-            $dateStart = new \DateTime();
-        } else {
-            $dateStart = \DateTime::createFromFormat('Y-m-d', $dateStart);
-        }
-        $dateStart->setTime(0, 0, 0);
-
-        $em = $this->getDoctrine()->getManager();
-        /** @var CronTaskLogRepository $cronTaskLogRepo */
-        $cronTaskLogRepo = $em->getRepository('DspSoftsCronManagerBundle:CronTaskLog');
-
-        $cronTaskLogRunningList = $cronTaskLogRepo->findByPidNotNull();
-        $cronTaskLogFinishedList = $cronTaskLogRepo->findFinishedByDate($dateStart);
-
-        $cronTaskLogList = array_merge($cronTaskLogRunningList, $cronTaskLogFinishedList);
-
-        return $this->render('@DspSoftsCronManager/CronTask/log.html.twig', array(
-            'dateStart' => $dateStart,
-            'cronTaskLogList' => $cronTaskLogList,
-        ));
-    }
-
-    public function logViewAction(CronTaskLog $cronTaskLog)
-    {
-        $logDir = $this->getParameter('dsp_softs_cron_manager.logs_dir');
-        $filePath = $logDir . $cronTaskLog->getFilePath();
-
-        return new Response(file_get_contents($filePath), 200, array('Content-type' => 'text/plain'));
-    }
-
     /**
      *
      * @param Request $request
@@ -103,7 +70,7 @@ class CronTaskController extends Controller
 
                 $request->getSession()->getFlashBag()->add(
                     'info',
-                    'Task ' . $cronTask->getName() . ' créée avec succès.'
+                    sprintf('Task %s créée avec succès.', $cronTask->getName())
                 );
 
                 return $this->redirect($this->generateUrl('dsp_cm_crontasks_list'));
@@ -136,7 +103,7 @@ class CronTaskController extends Controller
 
                 $request->getSession()->getFlashBag()->add(
                     'info',
-                    'Task ' . $cronTask->getName() . ' mise à jour avec succès.'
+                    sprintf('Task %s mise à jour avec succès.', $cronTask->getName())
                 );
 
                 return $this->redirect($this->generateUrl('dsp_cm_crontasks_list'));
@@ -146,15 +113,5 @@ class CronTaskController extends Controller
         return $this->render('@DspSoftsCronManager/CronTask/form.html.twig', array(
             'form' => $form->createView(),
         ));
-    }
-
-    public function killAction(CronTaskLog $cronTaskLog)
-    {
-        $process = new Process('kill -kill ' . $cronTaskLog->getPid());
-        $exitCode = $process->run();
-        if ($exitCode !== 0) {
-            return new Response("Exit code $exitCode " . $process->getOutput() . $process->getErrorOutput());
-        }
-        return $this->redirect($this->generateUrl('dsp_cm_crontasks_log'));
     }
 }

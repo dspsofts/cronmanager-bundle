@@ -3,12 +3,7 @@
 {% block body %}
     <h3>Log d'exécution des crons</h3>
 
-    <form method="get">
-        <p>
-            <label for="dateStart">Date de début : </label><input type="text" name="dateStart" value="{{ dateStart|date('Y-m-d') }}" />
-        </p>
-        <input type="submit" value="OK" />
-    </form>
+    {{ form(formSearch) }}
 
     {% if cronTaskLogList|length > 0 %}
         <table class="dsp_cm">

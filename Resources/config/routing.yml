@@ -16,15 +16,15 @@ dsp_cm_crontasks_list:
 
 dsp_cm_crontasks_log:
     path: /crontasks/log
-    defaults: { _controller: DspSoftsCronManagerBundle:CronTask:log }
+    defaults: { _controller: DspSoftsCronManagerBundle:CronTaskLog:log }
 
 dsp_cm_crontasks_log_view:
     path: /crontasks/log/{cronTaskLog}
-    defaults: { _controller: DspSoftsCronManagerBundle:CronTask:logView }
+    defaults: { _controller: DspSoftsCronManagerBundle:CronTaskLog:logView }
 
 dsp_cm_crontasks_kill:
     path: /crontasks/kill/{cronTaskLog}
-    defaults: { _controller: DspSoftsCronManagerBundle:CronTask:kill }
+    defaults: { _controller: DspSoftsCronManagerBundle:CronTaskLog:kill }
 
 dsp_cm_crontasks_add:
     path: /crontasks/add
