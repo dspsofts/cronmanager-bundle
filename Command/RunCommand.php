@@ -30,40 +30,9 @@ class RunCommand extends ContainerAwareCommand
     {
         $output->writeln('<comment>Running Cron Tasks...</comment>');
 
-        $em = $this->getContainer()->get('doctrine.orm.entity_manager');
-
-        $cronTaskLogRepo = $em->getRepository('DspSoftsCronManagerBundle:CronTaskLog');
-        $cronTaskLogs = $cronTaskLogRepo->findByPidNotNull();
-        foreach ($cronTaskLogs as $cronTaskLog) {
-            if (posix_getpgid($cronTaskLog->getPid()) === false) {
-                $output->writeln(sprintf('PID %s not found for cron task log id %s, terminating task...', $cronTaskLog->getPid(), $cronTaskLog->getId()));
-                $cronTaskLog->setStatus(CronTaskLog::STATUS_FAILED);
-                $cronTaskLog->setPid(null);
-                $cronTaskLog->setDateEnd(new \DateTime());
-                $em->persist($cronTaskLog);
-                $em->flush();
-            }
-        }
-
-        $cronTaskRepo = $em->getRepository('DspSoftsCronManagerBundle:CronTask');
-        $cronTasks = $cronTaskRepo->findBy(array('isActive' => true));
-
-        $planificationChecker = new PlanificationChecker();
-
-        foreach ($cronTasks as $cronTask) {
-            $run = $planificationChecker->isExecutionDue($cronTask->getPlanification());
-
-            if ($run) {
-                $output->writeln(sprintf('Running Cron Task <info>%s</info>', $cronTask->getName()));
-                $cli = 'exec ' . $this->getContainer()->get('kernel')->getRootDir() . DIRECTORY_SEPARATOR . 'console dsp:cron:runjob -c ' . $cronTask->getId() . ' &';
-                $output->writeln(sprintf('Command line : <info>%s</info>', $cli));
-                $process = new Process($cli);
-                $process->setTimeout(0);
-                $process->start();
-            } else {
-                $output->writeln(sprintf('Skipping Cron Task <info>%s</info>', $cronTask->getName()));
-            }
-        }
+        $cronManipulator = $this->getContainer()->get('dsp_cm.util.cron_manipulator');
+        $cronManipulator->checkRunningCrons();
+        $cronManipulator->runCrons();
 
         $output->writeln('<comment>Done!</comment>');
     }
