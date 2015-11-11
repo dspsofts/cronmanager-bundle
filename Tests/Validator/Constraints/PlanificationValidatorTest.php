@@ -10,23 +10,9 @@ namespace DspSofts\CronManagerBundle\Tests\Validator\Constraints;
 
 use DspSofts\CronManagerBundle\Validator\Constraints\Planification;
 use DspSofts\CronManagerBundle\Validator\Constraints\PlanificationValidator;
-use Symfony\Component\Validator\Context\ExecutionContext;
 
 class PlanificationValidatorTest extends \PHPUnit_Framework_TestCase
 {
-    private $constraint;
-
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContext */
-    private $context;
-
-    public function setUp()
-    {
-        $this->constraint = new Planification();
-        $this->context = $this->getMockBuilder('Symfony\Component\Validator\ExecutionContext')
-            ->disableOriginalConstructor()
-            ->getMock();
-    }
-
     /**
      * @param $value
      * @param $result
@@ -35,16 +21,21 @@ class PlanificationValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testValidate($value, $result)
     {
+        $constraint = new Planification();
+        $context = $this->getMockBuilder('Symfony\Component\Validator\ExecutionContext')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $validator = new PlanificationValidator();
-        $validator->initialize($this->context);
+        $validator->initialize($context);
 
         if (!$result) {
-            $this->context->expects($this->once())->method('addViolation');
+            $context->expects($this->once())->method('addViolation');
         } else {
-            $this->context->expects($this->never())->method('addViolation');
+            $context->expects($this->never())->method('addViolation');
         }
 
-        $validator->validate($value, $this->constraint);
+        $validator->validate($value, $constraint);
     }
 
     public function providerTestValidate()
@@ -64,10 +55,5 @@ class PlanificationValidatorTest extends \PHPUnit_Framework_TestCase
             array('* 6-8,10-20/2 * * *', true),
             array('* 6-8,10-20/2 * * *', true),
         );
-    }
-
-    public function tearDown()
-    {
-        $this->constraint = null;
     }
 }
