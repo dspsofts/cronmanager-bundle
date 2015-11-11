@@ -11,6 +11,7 @@ namespace DspSofts\CronManagerBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use DspSofts\CronManagerBundle\Validator\Constraints as DspCmAssert;
 
 /**
  * @ORM\Entity
@@ -34,15 +35,15 @@ class CronTask
      */
     private $name;
 
-	/**
-	 * @ORM\Column(type="boolean")
-	 */
-	private $isActive = false;
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isActive = false;
 
-	/**
-	 * @ORM\Column(type="boolean")
-	 */
-	private $isUnique = true;
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isUnique = true;
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
@@ -62,6 +63,7 @@ class CronTask
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @DspCmAssert\Planification
      */
     private $planification;
 
@@ -284,20 +286,20 @@ class CronTask
      *
      * @return CronTask
      */
-	public function setIsUnique($isUnique)
-	{
-		$this->isUnique = $isUnique;
+    public function setIsUnique($isUnique)
+    {
+        $this->isUnique = $isUnique;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * Get isUnique
-	 *
-	 * @return boolean
-	 */
-	public function getIsUnique()
-	{
-		return $this->isUnique;
-	}
+    /**
+     * Get isUnique
+     *
+     * @return boolean
+     */
+    public function getIsUnique()
+    {
+        return $this->isUnique;
+    }
 }
