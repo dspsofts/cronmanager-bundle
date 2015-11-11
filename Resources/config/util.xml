@@ -14,6 +14,13 @@
             <argument type="service" id="dsp_cm.util.planification_checker" />
             <argument>%kernel.root_dir%</argument>
         </service>
+
+        <service id="dsp_cm.util.job_runner" class="DspSofts\CronManagerBundle\Util\JobRunner">
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument type="service" id="logger" />
+            <argument>%kernel.root_dir%</argument>
+            <argument>%dsp_softs_cron_manager.logs_dir%</argument>
+        </service>
     </services>
 
 </container>
