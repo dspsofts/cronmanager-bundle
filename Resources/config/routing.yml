@@ -6,10 +6,6 @@ dsp_cm_crontasks_hello:
     path: /crontasks/hello
     defaults: { _controller: DspSoftsCronManagerBundle:CronTask:hello }
 
-dsp_cm_crontasks_test:
-    path: /crontasks/test
-    defaults: { _controller: DspSoftsCronManagerBundle:CronTask:test }
-
 dsp_cm_crontasks_list:
     path: /crontasks/list
     defaults: { _controller: DspSoftsCronManagerBundle:CronTask:list }

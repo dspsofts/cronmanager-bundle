@@ -24,22 +24,6 @@ class CronTaskController extends Controller
         return new Response("Hello world");
     }
 
-    public function testAction()
-    {
-        $entity = new CronTask();
-
-        $entity
-            ->setName('Example asset symlinking task')
-            ->setPlanification('* * * * *')// Run once every hour
-            ->setCommand('assets:install --symlink web');
-
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($entity);
-        $em->flush();
-
-        return new Response('OK!');
-    }
-
     public function listAction()
     {
         $em = $this->getDoctrine()->getManager();
