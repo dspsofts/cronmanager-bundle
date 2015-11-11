@@ -24,11 +24,6 @@ class JobRunner
     private $entityManager;
 
     /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
      * @var string
      */
     private $kernelRootDir;
@@ -37,6 +32,11 @@ class JobRunner
      * @var string
      */
     private $logDir;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
     /**
      * @var string
@@ -48,12 +48,12 @@ class JobRunner
      */
     private $cronTaskLog;
 
-    public function __construct(EntityManager $entityManager, LoggerInterface $logger, $kernelRootDir, $logDir)
+    public function __construct(EntityManager $entityManager, $kernelRootDir, $logDir, LoggerInterface $logger = null)
     {
         $this->entityManager = $entityManager;
-        $this->logger = $logger;
         $this->kernelRootDir = $kernelRootDir;
         $this->logDir = $logDir;
+        $this->logger = $logger;
     }
 
     public function runJob($cronTaskId)
@@ -105,7 +105,9 @@ class JobRunner
             foreach ($runningTasks as $runningTask) {
                 if ($runningTask->getCronTask() == $cronTask) {
                     $taskAlreadyRunning = true;
-                    $this->logger->warning('This task is unique and it is already running');
+                    if ($this->logger !== null) {
+                        $this->logger->warning('This task is unique and it is already running');
+                    }
 
                     $this->cronTaskLog->setStatus(CronTaskLog::STATUS_ALREADY_RUNNING);
                     $this->cronTaskLog->setDateEnd(new \DateTime());
@@ -122,18 +124,26 @@ class JobRunner
 
             $execString = '';
             if ($type == CronTask::TYPE_SYMFONY) {
-                $this->logger->info(sprintf('Executing symfony command %s ...', $command));
+                if ($this->logger !== null) {
+                    $this->logger->info(sprintf('Executing symfony command %s ...', $command));
+                }
                 $execString = 'exec ' . $this->kernelRootDir . DIRECTORY_SEPARATOR . 'console' . ' ' . $command;
             } elseif ($type == CronTask::TYPE_COMMAND) {
-                $this->logger->info(sprintf('Executing command %s ...', $command));
+                if ($this->logger !== null) {
+                    $this->logger->info(sprintf('Executing command %s ...', $command));
+                }
                 $execString = 'exec ' . $command;
             } elseif ($type == CronTask::TYPE_URL) {
-                $this->logger->info(sprintf('Executing URL %s ...', $command));
-                $this->logger->error('NOT IMPLEMENTED YET !');
+                if ($this->logger !== null) {
+                    $this->logger->info(sprintf('Executing URL %s ...', $command));
+                    $this->logger->error('NOT IMPLEMENTED YET !');
+                }
                 $execString = '';
             }
 
-            $this->logger->debug("Final command line = $execString");
+            if ($this->logger !== null) {
+                $this->logger->debug("Final command line = $execString");
+            }
             // Run the command
             $this->runCommand($execString, $cronTask->getTimeout());
         }

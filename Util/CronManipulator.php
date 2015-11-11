@@ -21,11 +21,6 @@ class CronManipulator
     private $entityManager;
 
     /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
      * @var PlanificationChecker
      */
     private $planificationChecker;
@@ -35,7 +30,12 @@ class CronManipulator
      */
     private $kernelRootDir;
 
-    public function __construct(EntityManager $entityManager, LoggerInterface $logger, PlanificationChecker $planificationChecker, $kernelRootDir)
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    public function __construct(EntityManager $entityManager, PlanificationChecker $planificationChecker, $kernelRootDir, LoggerInterface $logger = null)
     {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
@@ -49,7 +49,9 @@ class CronManipulator
         $cronTaskLogs = $cronTaskLogRepo->findByPidNotNull();
         foreach ($cronTaskLogs as $cronTaskLog) {
             if (posix_getpgid($cronTaskLog->getPid()) === false) {
-                $this->logger->info(sprintf('PID %s not found for cron task log id %s, terminating task...', $cronTaskLog->getPid(), $cronTaskLog->getId()));
+                if ($this->logger !== null) {
+                    $this->logger->info(sprintf('PID %s not found for cron task log id %s, terminating task...', $cronTaskLog->getPid(), $cronTaskLog->getId()));
+                }
                 $cronTaskLog->setStatus(CronTaskLog::STATUS_FAILED);
                 $cronTaskLog->setPid(null);
                 $cronTaskLog->setDateEnd(new \DateTime());
@@ -68,14 +70,20 @@ class CronManipulator
             $run = $this->planificationChecker->isExecutionDue($cronTask->getPlanification());
 
             if ($run) {
-                $this->logger->info(sprintf('Running Cron Task <info>%s</info>', $cronTask->getName()));
+                if ($this->logger !== null) {
+                    $this->logger->info(sprintf('Running Cron Task <info>%s</info>', $cronTask->getName()));
+                }
                 $cli = 'exec ' . $this->kernelRootDir . DIRECTORY_SEPARATOR . 'console dsp:cron:runjob -c ' . $cronTask->getId() . ' &';
-                $this->logger->info(sprintf('Command line : <info>%s</info>', $cli));
+                if ($this->logger !== null) {
+                    $this->logger->info(sprintf('Command line : <info>%s</info>', $cli));
+                }
                 $process = new Process($cli);
                 $process->setTimeout(0);
                 $process->start();
             } else {
-                $this->logger->info(sprintf('Skipping Cron Task <info>%s</info>', $cronTask->getName()));
+                if ($this->logger !== null) {
+                    $this->logger->info(sprintf('Skipping Cron Task <info>%s</info>', $cronTask->getName()));
+                }
             }
         }
     }
