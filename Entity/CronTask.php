@@ -14,7 +14,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use DspSofts\CronManagerBundle\Validator\Constraints as DspCmAssert;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="DspSofts\CronManagerBundle\Entity\Repository\CronTaskRepository")
  * @UniqueEntity("name")
  */
 class CronTask

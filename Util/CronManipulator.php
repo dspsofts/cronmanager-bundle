@@ -67,10 +67,13 @@ class CronManipulator
     {
         $entityManager = $this->managerRegistry->getManagerForClass('DspSoftsCronManagerBundle:CronTask');
         $cronTaskRepo = $entityManager->getRepository('DspSoftsCronManagerBundle:CronTask');
-        $cronTasks = $cronTaskRepo->findBy(array('isActive' => true));
+        $cronTasks = $cronTaskRepo->findCronsToLaunch();
 
         foreach ($cronTasks as $cronTask) {
-            $run = $this->planificationChecker->isExecutionDue($cronTask->getPlanification());
+            $run = true;
+            if (!$cronTask->getRelaunch()) {
+                $run = $this->planificationChecker->isExecutionDue($cronTask->getPlanification());
+            }
 
             if ($run) {
                 if ($this->logger !== null) {
