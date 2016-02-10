@@ -78,6 +78,11 @@ class CronTask
     private $lastRun;
 
     /**
+     * @ORM\Column(type="boolean")
+     */
+    private $relaunch = false;
+
+    /**
      * Get id
      *
      * @return integer
@@ -301,5 +306,24 @@ class CronTask
     public function getIsUnique()
     {
         return $this->isUnique;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getRelaunch()
+    {
+        return $this->relaunch;
+    }
+
+    /**
+     * @param boolean $relaunch
+     * @return CronTask
+     */
+    public function setRelaunch($relaunch)
+    {
+        $this->relaunch = $relaunch;
+
+        return $this;
     }
 }

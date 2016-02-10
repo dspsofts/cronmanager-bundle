@@ -14,6 +14,10 @@ dsp_cm_crontasks_log:
     path: /crontasks/log
     defaults: { _controller: DspSoftsCronManagerBundle:CronTaskLog:log }
 
+dsp_cm_crontasks_log_relaunch:
+    path: /crontasks/log/relaunch/{cronTask}
+    defaults: { _controller: DspSoftsCronManagerBundle:CronTaskLog:relaunch }
+
 dsp_cm_crontasks_log_view:
     path: /crontasks/log/{cronTaskLog}
     defaults: { _controller: DspSoftsCronManagerBundle:CronTaskLog:logView }

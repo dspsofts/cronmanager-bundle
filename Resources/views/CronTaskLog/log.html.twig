@@ -13,6 +13,7 @@
                     <th>PID</th>
                     <th>Début</th>
                     <th>Fin</th>
+                    <th>Relancer</th>
                     <th>Statut</th>
                     <th>Log</th>
                 </tr>
@@ -28,6 +29,7 @@
                                 {{ cronTaskLog.dateEnd|date('d/m/Y H:i:s') }}
                             {% endif %}
                         </td>
+                        <td><a href="{{ path('dsp_cm_crontasks_log_relaunch', {cronTask: cronTaskLog.cronTask.id}) }}">Relancer</a></td>
                         <td>{{ cronTaskLog.status }}</td>
                         <td><a href="{{ path('dsp_cm_crontasks_log_view', {cronTaskLog: cronTaskLog.id}) }}">log</a></td>
                     </tr>

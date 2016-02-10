@@ -8,6 +8,7 @@
 
 namespace DspSofts\CronManagerBundle\Controller;
 
+use DspSofts\CronManagerBundle\Entity\CronTask;
 use DspSofts\CronManagerBundle\Entity\CronTaskLog;
 use DspSofts\CronManagerBundle\Entity\Repository\CronTaskLogRepository;
 use DspSofts\CronManagerBundle\Entity\Search\CronTaskLogSearch;
@@ -59,5 +60,15 @@ class CronTaskLogController extends Controller
             return new Response("Exit code $exitCode " . $process->getOutput() . $process->getErrorOutput());
         }
         return $this->redirect($this->generateUrl('dsp_cm_crontasks_log'));
+    }
+
+    public function relaunchAction(CronTask $cronTask)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $cronTask->setRelaunch(true);
+        $em->persist($cronTask);
+        $em->flush();
+
+        return $this->redirectToRoute('dsp_cm_crontasks_log');
     }
 }
