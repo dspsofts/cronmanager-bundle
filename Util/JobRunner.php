@@ -93,6 +93,7 @@ class JobRunner
 
         // Set $lastrun for this crontask
         $cronTask->setLastRun(new \DateTime());
+        $cronTask->setRelaunch(false);
         $entityManagerCronTask->persist($cronTask);
         $entityManagerCronTask->flush();
 
