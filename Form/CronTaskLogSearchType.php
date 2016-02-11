@@ -29,7 +29,7 @@ class CronTaskLogSearchType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('dateStart', 'date')
+            ->add('dateStart', 'dspsofts_date_picker')
             ->add('search', 'submit');
     }
 }
