@@ -18,7 +18,7 @@ class CronTaskLogRepository extends EntityRepository
      * @param CronTaskLogSearch $cronTaskLogSearch
      * @return CronTaskLog[]
      */
-    public function searchRunning(CronTaskLogSearch $cronTaskLogSearch)
+    public function searchRunning(CronTaskLogSearch $cronTaskLogSearch = null)
     {
         $queryBuilder = $this->createQueryBuilder('cron_task_log');
         $queryBuilder->where('cron_task_log.pid IS NOT NULL');
@@ -26,7 +26,7 @@ class CronTaskLogRepository extends EntityRepository
 
         $params = array();
 
-        if ($cronTaskLogSearch->getCronTask() !== null) {
+        if ($cronTaskLogSearch !== null && $cronTaskLogSearch->getCronTask() !== null) {
             $queryBuilder->andWhere('cron_task_log.cronTask = :cronTask');
             $params['cronTask'] = $cronTaskLogSearch->getCronTask();
         }
