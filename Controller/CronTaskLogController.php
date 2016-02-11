@@ -33,8 +33,8 @@ class CronTaskLogController extends Controller
         /** @var CronTaskLogRepository $cronTaskLogRepo */
         $cronTaskLogRepo = $em->getRepository('DspSoftsCronManagerBundle:CronTaskLog');
 
-        $cronTaskLogRunningList = $cronTaskLogRepo->findByPidNotNull();
-        $cronTaskLogFinishedList = $cronTaskLogRepo->findFinishedByDate($cronTaskLogSearch->getDateStart());
+        $cronTaskLogRunningList = $cronTaskLogRepo->searchRunning($cronTaskLogSearch);
+        $cronTaskLogFinishedList = $cronTaskLogRepo->searchFinished($cronTaskLogSearch);
 
         $cronTaskLogList = array_merge($cronTaskLogRunningList, $cronTaskLogFinishedList);
 

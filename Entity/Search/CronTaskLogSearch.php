@@ -8,10 +8,21 @@
 
 namespace DspSofts\CronManagerBundle\Entity\Search;
 
+use DspSofts\CronManagerBundle\Entity\CronTask;
+
 class CronTaskLogSearch
 {
     /** @var \DateTime */
     private $dateStart;
+
+    /** @var CronTask */
+    private $cronTask;
+
+    public function __construct()
+    {
+        $this->dateStart = new \DateTime();
+        $this->dateStart->setTime(0, 0, 0);
+    }
 
     /**
      * @param \DateTime $dateStart
@@ -32,9 +43,23 @@ class CronTaskLogSearch
         return $this->dateStart;
     }
 
-    public function __construct()
+    /**
+     * @return CronTask
+     */
+    public function getCronTask()
     {
-        $this->dateStart = new \DateTime();
-        $this->dateStart->setTime(0, 0, 0);
+        return $this->cronTask;
     }
+
+    /**
+     * @param CronTask $cronTask
+     * @return CronTaskLogSearch
+     */
+    public function setCronTask($cronTask)
+    {
+        $this->cronTask = $cronTask;
+
+        return $this;
+    }
+
 }
