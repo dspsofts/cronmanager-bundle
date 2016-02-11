@@ -1,0 +1,10 @@
+services:
+    form.type.date_picker:
+        class: DspSofts\CronManagerBundle\Form\DatePickerType
+        tags:
+            - { name: form.type, alias: dspsofts_date_picker }
+
+    form.type.datetime_picker:
+        class: DspSofts\CronManagerBundle\Form\DateTimePickerType
+        tags:
+            - { name: form.type, alias: dspsofts_datetime_picker }
