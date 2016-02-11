@@ -104,7 +104,7 @@ class JobRunner
             $cronTaskLogRepo = $entityManagerCronTaskLog->getRepository('DspSoftsCronManagerBundle:CronTaskLog');
 
             // TODO create a specific method for this, no need to parse every running task here
-            $runningTasks = $cronTaskLogRepo->findByPidNotNull();
+            $runningTasks = $cronTaskLogRepo->searchRunning();
             foreach ($runningTasks as $runningTask) {
                 if ($runningTask->getCronTask() == $cronTask) {
                     $taskAlreadyRunning = true;
