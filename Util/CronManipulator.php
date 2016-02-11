@@ -48,7 +48,7 @@ class CronManipulator
     {
         $entityManager = $this->managerRegistry->getManagerForClass('DspSoftsCronManagerBundle:CronTaskLog');
         $cronTaskLogRepo = $entityManager->getRepository('DspSoftsCronManagerBundle:CronTaskLog');
-        $cronTaskLogs = $cronTaskLogRepo->findByPidNotNull();
+        $cronTaskLogs = $cronTaskLogRepo->searchRunning();
         foreach ($cronTaskLogs as $cronTaskLog) {
             if (posix_getpgid($cronTaskLog->getPid()) === false) {
                 if ($this->logger !== null) {
