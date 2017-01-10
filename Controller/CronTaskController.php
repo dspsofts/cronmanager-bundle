@@ -9,13 +9,10 @@
 namespace DspSofts\CronManagerBundle\Controller;
 
 use DspSofts\CronManagerBundle\Entity\CronTask;
-use DspSofts\CronManagerBundle\Entity\CronTaskLog;
-use DspSofts\CronManagerBundle\Entity\Repository\CronTaskLogRepository;
 use DspSofts\CronManagerBundle\Form\CronTaskType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Process\Process;
 
 class CronTaskController extends Controller
 {
@@ -43,7 +40,7 @@ class CronTaskController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $cronTask = new CronTask();
-        $form = $this->createForm(new CronTaskType(), $cronTask);
+        $form = $this->createForm(CronTaskType::class, $cronTask);
 
         if ($request->isMethod('POST')) {
             $form->handleRequest($request);
@@ -76,7 +73,7 @@ class CronTaskController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $form = $this->createForm(new CronTaskType(), $cronTask);
+        $form = $this->createForm(CronTaskType::class, $cronTask);
 
         if ($request->isMethod('POST')) {
             $form->handleRequest($request);

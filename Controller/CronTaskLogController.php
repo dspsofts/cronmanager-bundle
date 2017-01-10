@@ -24,7 +24,7 @@ class CronTaskLogController extends Controller
     {
         $cronTaskLogSearch = new CronTaskLogSearch();
 
-        $formSearch = $this->createForm(new CronTaskLogSearchType(), $cronTaskLogSearch);
+        $formSearch = $this->createForm(CronTaskLogSearchType::class, $cronTaskLogSearch);
         if ($request->isMethod('POST')) {
             $formSearch->handleRequest($request);
         }

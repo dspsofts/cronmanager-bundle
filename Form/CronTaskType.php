@@ -36,9 +36,10 @@ class CronTaskType extends AbstractType
                 'label' => 'Planification',
             ))
             ->add('type', ChoiceType::class, array(
+                'choices_as_values' => true,
                 'choices' => array(
-                    'SYMFONY' => 'Commande symfony',
-                    'COMMAND' => 'Ligne de commande',
+                    'Commande symfony' => 'SYMFONY',
+                    'Ligne de commande' => 'COMMAND',
                     'URL' => 'URL',
                 )
             ))
