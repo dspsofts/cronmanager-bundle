@@ -10,7 +10,7 @@
 namespace DspSofts\CronManagerBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DatePickerType extends AbstractType
@@ -29,6 +29,6 @@ class DatePickerType extends AbstractType
 
     public function getParent()
     {
-        return 'date';
+        return DateType::class;
     }
 }
