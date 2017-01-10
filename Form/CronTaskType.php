@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * CronTask type.
  *
  * @author Pierre Feyssaguet <pfeyssaguet@gmail.com>
  * @since 01/11/15 14:23
@@ -9,16 +10,15 @@
 namespace DspSofts\CronManagerBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CronTaskType extends AbstractType
 {
-    public function getName()
-    {
-        return 'dspsofts_cm_crontask';
-    }
-
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
@@ -29,13 +29,13 @@ class CronTaskType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name', 'text', array(
+            ->add('name', TextType::class, array(
                 'label' => 'Nom',
             ))
-            ->add('planification', 'text', array(
+            ->add('planification', TextType::class, array(
                 'label' => 'Planification',
             ))
-            ->add('type', 'choice', array(
+            ->add('type', ChoiceType::class, array(
                 'choices' => array(
                     'SYMFONY' => 'Commande symfony',
                     'COMMAND' => 'Ligne de commande',
@@ -44,12 +44,12 @@ class CronTaskType extends AbstractType
             ))
             ->add('command')
             ->add('timeout')
-            ->add('isActive', 'checkbox', array(
+            ->add('isActive', CheckboxType::class, array(
                 'required' => false,
             ))
-            ->add('isUnique', 'checkbox', array(
+            ->add('isUnique', CheckboxType::class, array(
                 'required' => false,
             ))
-            ->add('save', 'submit');
+            ->add('save', SubmitType::class);
     }
 }

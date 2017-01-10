@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * Date picker.
  *
  * @author Pierre Feyssaguet <pfeyssaguet@gmail.com>
  * @since 07/11/15 23:31
@@ -14,11 +15,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DatePickerType extends AbstractType
 {
-    public function getName()
-    {
-        return 'dspsofts_date_picker';
-    }
-
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(

@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * Date and time picker.
  *
  * @author Pierre Feyssaguet <pfeyssaguet@gmail.com>
  * @since 07/11/15 23:37
@@ -14,11 +15,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DateTimePickerType extends AbstractType
 {
-    public function getName()
-    {
-        return 'dspsofts_datetime_picker';
-    }
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $dateOptions = $builder->get('date')->getOptions();
@@ -35,7 +31,7 @@ class DateTimePickerType extends AbstractType
 
         $builder
             ->remove('date')
-            ->add('date', 'dspsofts_date_picker', $dateOptions)
+            ->add('date', DatePickerType::class, $dateOptions)
         ;
     }
 
