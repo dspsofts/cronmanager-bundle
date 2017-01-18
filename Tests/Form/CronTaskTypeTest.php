@@ -17,7 +17,7 @@ class CronTaskTypeTest extends TypeTestCase
     {
         $cronTask = new CronTask();
 
-        $form = $this->factory->create(new CronTaskType(), $cronTask);
+        $form = $this->factory->create(CronTaskType::class, $cronTask);
         $formData = array(
             'name' => 'test cron task',
             'planification' => '* * * * *',

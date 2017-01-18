@@ -23,7 +23,7 @@ class CronTaskLogSearchTypeTest extends TypeTestCase
         $cronTaskLogSearch = new CronTaskLogSearch();
         $cronTaskLogSearch->setDateStart($dateTime);
 
-        $form = $this->factory->create(new CronTaskLogSearchType(), $cronTaskLogSearch);
+        $form = $this->factory->create(CronTaskLogSearchType::class, $cronTaskLogSearch);
 
         $formData = array(
             'dateStart' => $dateTime,
