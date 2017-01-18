@@ -9,6 +9,8 @@
 namespace DspSofts\CronManagerBundle\Form;
 
 use Doctrine\ORM\EntityRepository;
+use DspSofts\CronManagerBundle\Entity\CronTask;
+use DspSofts\CronManagerBundle\Entity\Search\CronTaskLogSearch;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -20,7 +22,7 @@ class CronTaskLogSearchType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'DspSofts\CronManagerBundle\Entity\Search\CronTaskLogSearch',
+            'data_class' => CronTaskLogSearch::class,
         ));
     }
 
@@ -29,7 +31,7 @@ class CronTaskLogSearchType extends AbstractType
         $builder
             ->add('dateStart', DatePickerType::class)
             ->add('cron_task', EntityType::class, array(
-                'class' => 'DspSofts\CronManagerBundle\Entity\CronTask',
+                'class' => CronTask::class,
                 'placeholder' => 'Tout',
                 'choice_label' => 'name',
                 'query_builder' => function (EntityRepository $entityRepository) {
