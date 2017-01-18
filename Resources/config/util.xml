@@ -11,13 +11,13 @@
         <service id="dsp_cm.util.cron_manipulator" class="DspSofts\CronManagerBundle\Util\CronManipulator">
             <argument type="service" id="doctrine" />
             <argument type="service" id="dsp_cm.util.planification_checker" />
-            <argument>%kernel.root_dir%</argument>
+            <argument>%kernel.root_dir%/../bin</argument>
             <argument type="service" id="logger" on-invalid="ignore" />
         </service>
 
         <service id="dsp_cm.util.job_runner" class="DspSofts\CronManagerBundle\Util\JobRunner">
             <argument type="service" id="doctrine" />
-            <argument>%kernel.root_dir%</argument>
+            <argument>%kernel.root_dir%/../bin</argument>
             <argument>%dsp_softs_cron_manager.logs_dir%</argument>
             <argument type="service" id="logger" on-invalid="ignore" />
         </service>
