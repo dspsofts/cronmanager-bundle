@@ -22,7 +22,7 @@ class PlanificationValidatorTest extends \PHPUnit_Framework_TestCase
     public function testValidate($value, $result)
     {
         $constraint = new Planification();
-        $context = $this->getMockBuilder('Symfony\Component\Validator\ExecutionContext')
+        $context = $this->getMockBuilder('Symfony\Component\Validator\Context\ExecutionContext')
             ->disableOriginalConstructor()
             ->getMock();
 
