@@ -83,9 +83,18 @@ class CronManipulator
                 if ($this->logger !== null) {
                     $this->logger->info(sprintf('Command line : <info>%s</info>', $cli));
                 }
-                $process = new Process($cli);
-                $process->setTimeout(0);
-                $process->start();
+                try {
+                    $process = new Process($cli);
+                    $process->setTimeout(0);
+                    $process->start();
+                    // FIXME attendre un peu avant de quitter le process pere
+                    sleep(1);
+                } catch (\Exception $e) {
+                    if ($this->logger !== null) {
+                        $this->logger->critical("Erreur en lançant le process : " . get_class($e) . " : " . $e->getMessage());
+                        $this->logger->critical($e->getTraceAsString());
+                    }
+                }
             } else {
                 if ($this->logger !== null) {
                     $this->logger->info(sprintf('Skipping Cron Task <info>%s</info>', $cronTask->getName()));
